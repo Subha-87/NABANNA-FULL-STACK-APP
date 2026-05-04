@@ -1,0 +1,36 @@
+/*.custom-table thead {
+  font-weight: 600;
+  text-align: center;
+  font-size: 20px;
+}
+
+.custom-table thead th {
+  font-weight: 600;
+  background-color: #116A7B;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.custom-table tbody{
+  border: 1px solid rgb(17, 25, 121);
+ 
+}
+.custom-table tbody td{
+  text-transform: capitalize;
+  font-size: 16px;
+ 
+}
+.custom-table td{
+  text-align: center;
+  vertical-align: middle !important;
+ 
+}*/
+  
+  
+  
+  
+  
+  
+  

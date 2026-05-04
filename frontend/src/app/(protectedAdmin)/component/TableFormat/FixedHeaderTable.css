@@ -1,0 +1,95 @@
+/* Noraml CSS */
+/*.custom-table thead {
+  font-weight: 600;
+  text-align: center;
+}
+
+.custom-table thead th {
+  font-weight: 600;
+  background-color: #124170;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.custom-table tbody {
+  border: 1px solid rgb(17, 25, 121);
+}
+.custom-table tbody td {
+  text-transform: capitalize;
+}
+.custom-table td {
+  text-align: center;
+  vertical-align: middle !important;
+}*/
+
+/*Professional Css */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background-color: #ffffff;
+  
+
+}
+
+/* Table Header */
+.custom-table thead th {
+  font-weight: 600;
+  background: #124170;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  border-bottom: 2px solid #0f355b;
+}
+
+/* Table Body */
+.custom-table tbody td {
+  padding: 10px 12px;
+  text-align: center;
+  vertical-align: middle;
+  text-transform: capitalize;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+/* Zebra Row Style */
+.custom-table tbody tr:nth-child(even) {
+  background-color: #f7f9fc;
+}
+
+/* Hover Effect */
+.custom-table tbody tr:hover {
+  background-color: #eef3ff;
+  transition: background-color 0.2s ease;
+}
+
+/* Table Border */
+.custom-table tbody {
+  border: 1px solid #d9e1ec;
+}
+
+
+.table-wrapper {
+   /* adjust based on your layout  used only complain table*/
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/*.custom-table td {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}*/
+
+/*.table-wrapper {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  overflow: auto;
+}*/

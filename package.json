@@ -1,0 +1,24 @@
+{
+  "name": "nabanna-full-stack-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "build": "concurrently \"npm run build --prefix backend\" \"npm run build --prefix frontend\"",
+    "start": "concurrently \"npm run start --prefix backend\" \"npm run start --prefix frontend\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.2.1",
+    "mongoose": "^8.18.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
+  }
+}

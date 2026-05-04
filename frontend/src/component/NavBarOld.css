@@ -1,0 +1,79 @@
+/* Navbar container */
+
+.navContainer {
+  height: 100%;
+}
+
+/* Align navbar items */
+
+.navRow {
+  height: 100%;
+  align-items: center;
+}
+
+/* Column center */
+
+.navCol {
+  text-align: center;
+}
+
+/* Nav item */
+
+.navItem {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: white;
+  text-decoration: none;
+  font-family: "Times New Roman", Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 6px 10px;
+  transition: all 0.25s ease;
+}
+
+/* Icon size */
+
+.navIcon {
+  font-size: 22px;
+}
+
+/* Hover animation */
+
+.navItem:hover {
+  background-color: #450693;
+  transform: translateY(-2px);
+  color: white;
+}
+
+/* Active page */
+
+.navActive {
+  color: #b6f500;
+  font-weight: 600;
+   
+}
+
+/* bottom indicator */
+.navItem::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0%;
+  height: 3px;
+  background-color: #b6f500;
+  transition: width 0.3s ease;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+/* hover indicator */
+.navItem:hover::after {
+  width: 100%;
+}
+/* active page indicator */
+.navActive::after {
+  width: 100%;
+}

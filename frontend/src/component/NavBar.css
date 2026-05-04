@@ -1,0 +1,84 @@
+/* Navbar container */
+.navContainer {
+  height: 100%;
+  max-width: 1200px; /* Keeps nav items from stretching too wide on large screens */
+  margin: 0 auto;
+}
+
+/* Align navbar items */
+.navRow {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly; /* Centers the navigation items */
+  gap: 15px; /* Space between items */
+  flex-wrap: nowrap;
+}
+
+/* Column center - adjusting to fit content rather than stretching */
+.navCol {
+  display: flex;
+  justify-content: center;
+  flex: 0 1 auto; /* Prevents columns from stretching to fill the whole row */
+  padding: 0; /* Override Bootstrap default padding for tighter fit */
+  text-align: center;
+}
+
+/* Nav item */
+.navItem {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.75); /* Slightly muted white looks more professional */
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Modern system font stack */
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px; /* Creates the modern 'pill' hover shape */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother, professional easing */
+}
+
+/* Icon size */
+.navIcon {
+  font-size: 20px;
+}
+
+/* Hover animation */
+.navItem:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle glass/frosted effect */
+  color: #ffffff;
+  /* No translateY - modern design relies on subtle color changes, not movement */
+}
+
+/* Active page */
+.navActive {
+  color: #b6f500;
+  font-weight: 600;
+}
+
+/* Bottom indicator */
+.navItem::after {
+  content: "";
+  position: absolute;
+  bottom: 4px; /* Tucks the line under the text, inside the padding */
+  left: 60%;
+  transform: translateX(-50%);
+  width: 0%;
+  height: 2px; /* Thinner line looks more refined */
+  background-color: #4ade80; /* A softer, modern green/lime */
+  border-radius: 1px;
+  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Hover indicator */
+.navItem:hover::after {
+  width: 60%; /* Doesn't stretch all the way to the edges, looks cleaner */
+}
+
+/* Active page indicator */
+.navActive::after {
+  width: 60%;
+  background-color: #4ade80; /* Matching active indicator color */
+}

@@ -1,0 +1,76 @@
+.homeLayout {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px 1fr 50px;
+    grid-template-areas:
+        "topbar"
+        "main"
+        "footer";
+
+    /* KEY CHANGE: lock grid to viewport, prevent it from expanding */
+    height: 100vh;
+    overflow: hidden;
+}
+
+/*.header {
+    grid-area: topbar;
+    display: flex;
+    background-color: #1B3C53;
+    align-items: center;
+    /* Keep header above main content */
+    /*z-index: 10;
+    /* Optional: remove bottom border glow, or add one */
+    /*box-shadow: 0 1px 0 0 rgba(0,0,0,0.3);
+}*/
+.header {
+    grid-area: topbar;
+    display: flex;
+    background-color: rgba(27, 60, 83, 0.95); /* Slightly transparent for the blur effect */
+    align-items: center;
+    z-index: 10;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Softer, wider shadow */
+    backdrop-filter: blur(12px); /* Frosted glass effect when scrolling */
+    -webkit-backdrop-filter: blur(12px); /* Safari support */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Subtle edge definition */
+}
+
+.main {
+    grid-area: main;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: #C2DEDC; /* fallback, hidden behind ITabout's bg-slate-950 */
+    /* Only this section scrolls */
+    overflow-y: auto;
+    /* Smooth scrolling for anchor links if any */
+    scroll-behavior: smooth;
+}
+
+.footer {
+    grid-area: footer;
+    display: flex;
+    background-color: #1B3C53;
+    justify-content: center;
+    align-items: center;
+    /* Keep footer above main content */
+    z-index: 10;
+    box-shadow: 0 -1px 0 0 rgba(0,0,0,0.3);
+}
+
+/* Optional: custom scrollbar for main area */
+.main::-webkit-scrollbar {
+    width: 6px;
+}
+
+.main::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+.main::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 3px;
+}
+
+.main::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}

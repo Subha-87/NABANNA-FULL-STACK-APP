@@ -1,0 +1,126 @@
+/* ================= TAB HEADER ================= */
+
+.custom-tabs.nav-tabs {
+  background-color: #360185;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  font-size: 18px;
+  font-weight: 600;
+  font-family: sans-serif;
+
+  border: none;
+  padding: 4px 6px;
+}
+
+/* tab buttons */
+
+.custom-tabs .nav-link {
+  color: #fff;
+  border: none;
+  border-radius: 6px 6px 0 0;
+  padding: 12px 22px;
+
+  position: relative;
+
+  transition: 
+  background-color 0.25s ease,
+  color 0.25s ease,
+  transform 0.15s ease,
+  box-shadow 0.2s ease;
+
+}
+
+/* hover effect */
+
+.custom-tabs .nav-link:hover {
+  color: #fff;
+  background-color: #5459AC;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+}
+
+/* active tab */
+
+.custom-tabs .nav-link.active {
+  background-color: #7132CA;
+  color: #B6F500;
+  font-weight: 600;
+
+  border-bottom: 4px solid #FFED00;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  transform: scale(0.97);
+}
+
+/* smooth active indicator animation */
+
+.custom-tabs .nav-link {
+  border-bottom: 4px solid transparent;
+}
+
+/* ================= TAB CONTENT ================= */
+
+.tab-content{
+  overflow: auto;
+  position: relative;
+
+  display: flex;
+  flex-grow: 1;
+
+  padding: 10px;
+
+  animation: tabFade 0.35s ease;
+}
+
+/* active pane */
+
+.tab-content .active{
+  display: flex;
+}
+
+/* pane layout */
+
+.tab-pane{
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  position: relative;
+  overflow: auto;
+
+  animation: contentSlide 0.35s ease;
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes tabFade {
+
+  from{
+    opacity: 0;
+  }
+
+  to{
+    opacity: 1;
+  }
+
+}
+
+@keyframes contentSlide {
+
+  from{
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}

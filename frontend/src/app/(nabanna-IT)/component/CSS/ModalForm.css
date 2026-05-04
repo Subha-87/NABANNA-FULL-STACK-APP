@@ -1,0 +1,28 @@
+.voiceEdit,.complainEdit{
+  border: 3px solid rgba(0, 0, 255, 0.67);
+  border-radius: 10px;
+  font-size: 20px;
+}
+.complainEdit .row{
+  padding: 5px;
+  border-bottom: 1px dotted;
+  
+}
+/*.netEdit .row{
+  padding: 5px;
+  border-bottom: 1px dotted;
+  
+}*/
+.voiceEdit .row{
+  padding: 5px;
+  border-bottom: 1px dotted;
+}
+.complainEdit .col{
+  color: blue;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.error_message{
+   font-size: 15px;
+}

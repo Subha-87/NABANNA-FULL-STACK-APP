@@ -1,0 +1,48 @@
+/* Style the tab header */
+.order-tabs.nav-tabs {
+  background-color: #261cc1;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: sans-serif;
+}
+
+.order-tabs .nav-link:hover {
+  color: #fff;
+  background-color: #3a9aff;
+}
+
+.order-tabs .nav-link {
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  padding: 10px 20px;
+}
+
+.order-tabs .nav-link.active {
+  background-color: #088395;
+  color: #ffd400;
+  font-weight: 700;
+  border-bottom: 4px solid #16FF00;
+}
+
+.tab-content {
+  overflow: auto;
+  position: relative;
+  display: flex;
+  flex-grow: 1;
+  animation: fadeIn 0.3s ease-in-out;
+}
+.tab-content .active {
+  display: flex;
+}
+
+.tab-pane {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  position: relative;
+  overflow: auto;
+}

@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+.avatar-wrapper {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+
+.avatar-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.online-dot {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2px solid #0f172a;
+}
+
+.user-name {
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.user-rank {
+  color: #8cf32b;
+  font-size: 13px;
+}
+
+.searchInput {
+  width: 250px;
+  height: 45px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 2px solid #321796;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e3a8a;
+  background-color: rgb(255, 253, 194);
+  transition: all 0.25s ease;
+}
+
+.searchInput::placeholder {
+  color: #0a26b4;
+  font-weight: 400;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #450693;
+  box-shadow: 0 0 6px rgba(69, 6, 147, 0.4);
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
+:global(.collapsed) .mainLayout {
+  --sidebar-width: 70px;
+}
+
+:global(.collapsed) .sidebar .menuText {
+  display: none;
+}
+
+:global(.collapsed) .sidebar li {
+  justify-content: center;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

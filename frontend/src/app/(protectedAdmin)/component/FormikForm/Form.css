@@ -1,0 +1,54 @@
+.itemAddClass input{
+    border: 1px solid black;
+    margin: 3px;
+    border-radius: 5px;
+    display: flex;
+    text-transform: uppercase;
+    text-align: center;
+    
+}
+.itemAddClass ::placeholder{
+   color: rgb(47, 0, 128);
+   opacity: 0.5;
+   
+   font-weight: 500;
+}
+
+.custom-field {
+  border: 2px solid blue;
+  padding: 8px;
+  border-radius: 4px;
+}
+.taskReAssign{
+ 
+  font-size: 20px;
+}
+.taskReAssign .row{
+  padding: 5px;
+  border-bottom: 1px dotted;
+}
+
+.estimateEdit ,.estChallan{
+  font-size: 20px;
+  font-family: serif;
+  width: 600px;
+  background-color: #FFECC0;
+  border-radius: 10px;
+  border: 1px solid black;
+}
+.estimateEdit .row ,.estChallan .row{
+  border-bottom: 1px dotted;
+  align-items: center;
+}
+.estChallan{
+  width: "";
+}
+.estChallan div.container div.row div.col-md-8 input{
+  border-radius: 5px;
+  
+  
+}
+.estChallan div.container div.row,.estimateEdit .row{
+  padding: 5px;
+
+}

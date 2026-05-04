@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+.avatar-wrapper{
+  position:relative;
+  width:60px;
+  height:60px;
+}
+
+.avatar-img{
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+
+.online-dot{
+  position:absolute;
+  bottom:4px;
+  right:4px;
+  width:14px;
+  height:14px;
+  background:#22c55e;
+  border-radius:50%;
+  border:2px solid #0f172a;
+}
+
+.user-name{
+  color:white;
+  font-weight:600;
+  font-size:18px;
+}
+
+.user-rank{
+  color:#8cf32b;
+  font-size:13px;
+}
+
+/* FOOTER CSS */
+
+.footer{
+  width:100%;
+  background:#1e293b;
+  color:#cbd5f5;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-top:1px solid #334155;
+
+  padding:10px 0;
+  font-family:sans-serif;
+
+  transition: background 0.3s ease;
+}
+
+/* container */
+
+.footer-content{
+  width:95%;
+  max-width:1400px;
+
+  display:flex;
+  justify-content:space-evenly;
+  align-items:center;
+
+  font-size:14px;
+  letter-spacing:0.3px;
+  font-family:sans-serif;
+
+  transition: background 0.3s ease;
+}
+
+/* left section */
+
+.footer-text{
+  display:flex;
+  align-items:center;
+  gap:6px;
+
+  font-weight:500;
+}
+
+/* icon */
+
+.footer-icon{
+  font-size:14px;
+  opacity:0.9;
+}
+
+/* right section */
+
+.footer-right{
+  opacity:0.75;
+  font-weight:400;
+
+  transition: opacity 0.25s ease;
+}
+
+/* subtle hover effect */
+
+.footer-right:hover{
+  opacity:1;
+}
+
+.searchInput {
+ 
+  height: 45px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 2px solid #321796;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e3a8a;
+  background-color: rgb(255, 253, 194);
+  transition: all 0.25s ease;
+}
+
+.searchInput::placeholder {
+  color: #0a26b4;
+  font-weight: 400;
+  
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #450693;
+  box-shadow: 0 0 6px rgba(69, 6, 147, 0.4);
+}
+
+
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -48%) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  /* Force MUI to win over Bootstrap */
+.MuiOutlinedInput-root {
+  border-radius: 10px !important;
+}
+
+.MuiOutlinedInput-root fieldset {
+  border-color: #d1d5db !important;
+  border-width: 1.5px !important;
+}
+
+.MuiOutlinedInput-root:hover fieldset {
+  border-color: #9ca3af !important;
+}
+
+.MuiOutlinedInput-root.Mui-focused fieldset {
+  border-color: #667eea !important;
+  border-width: 2px !important;
+}
+
+.MuiFormControlLabel-root {
+  margin-right: 0 !important;
+}
+
+.MuiButton-contained {
+  text-transform: none !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Kill Bootstrap form resets inside modal */
+.modal .form-control,
+.modal .form-select {
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}

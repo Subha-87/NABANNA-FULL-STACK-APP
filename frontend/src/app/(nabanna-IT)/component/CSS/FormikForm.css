@@ -1,0 +1,35 @@
+.Machine div.container div.row div.col input,select,div.col-md-2 input,div.col-md-3 input,div.col-md-4 input{
+    border: 1px solid black;
+    margin: 3px;
+    border-radius: 5px;
+    display: flex;
+    text-transform: uppercase;
+    text-align: center;
+    
+}
+.Machine div.container div.row,.editMachineForm div.container div.row{
+   padding: 5px;
+   border-bottom: 1px dotted;
+   align-items: center;
+}
+.Machine,.editMachineForm{
+    background-color: #F2F9FF;
+    border-radius: 5px;
+    font-family: serif;
+}
+
+.systemClass input{
+     border: 1px solid black;
+    margin: 3px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.department input{
+    width: 100px;
+    border-radius: 5px;
+    border:1px solid black
+}
+
+

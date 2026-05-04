@@ -1,0 +1,110 @@
+/* Security.css */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.grid-bg {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* ── Step Card ── */
+.sc { flex-shrink: 0; width: 152px; border-radius: 14px; padding: 18px 12px 15px; text-align: center; position: relative; transition: all .25s; }
+.sc:hover { transform: translateY(-2px); }
+.sn { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #000; }
+.ic { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; }
+.ic svg { width: 20px; height: 20px; }
+.st { font-size: 11.5px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
+.sd { font-size: 9px; color: rgba(255, 255, 255, 0.38); line-height: 1.45; }
+.ct { display: inline-block; margin-top: 6px; padding: 2px 7px; border-radius: 5px; font-size: 8px; font-family: 'Courier New', monospace; background: rgba(255, 255, 255, 0.035); border: 1px solid rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.32); }
+
+/* ── Arrow H ── */
+.ah { flex-shrink: 0; width: 30px; display: flex; align-items: center; justify-content: center; }
+.ah .l { width: 100%; height: 2px; position: relative; }
+.ah .l::after { content: ''; position: absolute; right: -1px; top: 50%; transform: translateY(-50%); border-left: 6px solid; border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
+
+/* ── Arrow V ── */
+.av { display: flex; flex-direction: column; align-items: center; padding: 6px 0; }
+.av .l { width: 2px; height: 22px; position: relative; }
+.av .l::after { content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%); border-top: 6px solid; border-left: 4px solid transparent; border-right: 4px solid transparent; }
+
+/* ── Flow row ── */
+.fr { display: flex; align-items: center; justify-content: center; overflow-x: auto; padding-bottom: 4px; }
+
+/* ── Phase badge ── */
+.pb { display: inline-flex; align-items: center; gap: 5px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; padding: 4px 12px; border-radius: 100px; }
+
+/* ── Section connector ── */
+.sconn { display: flex; flex-direction: column; align-items: center; padding: 6px 0; }
+.sconn .vl { width: 2px; height: 20px; }
+.sconn .vl::after { content: ''; display: block; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid rgba(255, 255, 255, 0.12); }
+.sconn .lbl { font-size: 8.5px; color: rgba(255, 255, 255, 0.18); margin-top: 4px; letter-spacing: .15em; text-transform: uppercase; font-weight: 600; }
+
+/* ── Crossover ── */
+.cross-zone { border: 1px dashed rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; justify-content: center; gap: 14px; }
+.cross-zone .ca { width: 2px; height: 20px; position: relative; }
+.cross-zone .ca::after { content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%); border-top: 6px solid; border-left: 4px solid transparent; border-right: 4px solid transparent; }
+
+/* ── Result cards ── */
+.rs { flex-shrink: 0; width: 130px; background: rgba(16, 185, 129, 0.07); border: 1px solid rgba(16, 185, 129, 0.18); border-radius: 14px; padding: 16px 10px; text-align: center; }
+.rf { flex-shrink: 0; width: 130px; background: rgba(239, 68, 68, 0.07); border: 1px solid rgba(239, 68, 68, 0.18); border-radius: 14px; padding: 16px 10px; text-align: center; }
+
+/* ══════════ PHASE COLORS ══════════ */
+
+/* Emerald – Phase 1 */
+.p1 .sc { background: rgba(16, 185, 129, 0.035); border: 1px solid rgba(16, 185, 129, 0.09); }
+.p1 .sc:hover { background: rgba(16, 185, 129, 0.07); border-color: rgba(16, 185, 129, 0.22); box-shadow: 0 0 24px rgba(16, 185, 129, 0.06); }
+.p1 .sn { background: #10b981; }
+.p1 .ic { background: rgba(16, 185, 129, 0.1); color: #34d399; }
+.p1 .ah .l { background: rgba(16, 185, 129, 0.22); }
+.p1 .ah .l::after { border-left-color: rgba(16, 185, 129, 0.4); }
+.p1 .st { color: #a7f3d0; }
+
+/* Cyan – Phase 2 */
+.p2 .sc { background: rgba(6, 182, 212, 0.035); border: 1px solid rgba(6, 182, 212, 0.09); }
+.p2 .sc:hover { background: rgba(6, 182, 212, 0.07); border-color: rgba(6, 182, 212, 0.22); box-shadow: 0 0 24px rgba(6, 182, 212, 0.06); }
+.p2 .sn { background: #06b6d4; }
+.p2 .ic { background: rgba(6, 182, 212, 0.1); color: #22d3ee; }
+.p2 .ah .l { background: rgba(6, 182, 212, 0.22); }
+.p2 .ah .l::after { border-left-color: rgba(6, 182, 212, 0.4); }
+.p2 .st { color: #a5f3fc; }
+
+/* Amber – Phase 3 */
+.p3 .sc { background: rgba(245, 158, 11, 0.035); border: 1px solid rgba(245, 158, 11, 0.09); }
+.p3 .sc:hover { background: rgba(245, 158, 11, 0.07); border-color: rgba(245, 158, 11, 0.22); box-shadow: 0 0 24px rgba(245, 158, 11, 0.06); }
+.p3 .sn { background: #f59e0b; }
+.p3 .ic { background: rgba(245, 158, 11, 0.1); color: #fbbf24; }
+.p3 .ah .l { background: rgba(245, 158, 11, 0.22); }
+.p3 .ah .l::after { border-left-color: rgba(245, 158, 11, 0.4); }
+.p3 .st { color: #fde68a; }
+
+/* Violet – Phase 4 */
+.p4 .sc { background: rgba(139, 92, 246, 0.035); border: 1px solid rgba(139, 92, 246, 0.09); }
+.p4 .sc:hover { background: rgba(139, 92, 246, 0.07); border-color: rgba(139, 92, 246, 0.22); box-shadow: 0 0 24px rgba(139, 92, 246, 0.06); }
+.p4 .sn { background: #8b5cf6; }
+.p4 .ic { background: rgba(139, 92, 246, 0.1); color: #a78bfa; }
+.p4 .ah .l { background: rgba(139, 92, 246, 0.22); }
+.p4 .ah .l::after { border-left-color: rgba(139, 92, 246, 0.4); }
+.p4 .st { color: #c4b5fd; }
+
+/* Rose – Phase 5 */
+.p5 .sc { background: rgba(244, 63, 94, 0.035); border: 1px solid rgba(244, 63, 94, 0.09); }
+.p5 .sc:hover { background: rgba(244, 63, 94, 0.07); border-color: rgba(244, 63, 94, 0.22); box-shadow: 0 0 24px rgba(244, 63, 94, 0.06); }
+.p5 .sn { background: #f43f5e; }
+.p5 .ic { background: rgba(244, 63, 94, 0.1); color: #fb7185; }
+.p5 .ah .l { background: rgba(244, 63, 94, 0.22); }
+.p5 .ah .l::after { border-left-color: rgba(244, 63, 94, 0.4); }
+.p5 .st { color: #fda4af; }
+
+/* Highlighted cards */
+.hl-green { border-color: rgba(16, 185, 129, 0.22) !important; background: rgba(16, 185, 129, 0.06) !important; }
+.hl-cyan { border-color: rgba(6, 182, 212, 0.22) !important; background: rgba(6, 182, 212, 0.06) !important; }
+.hl-violet { border-color: rgba(139, 92, 246, 0.22) !important; background: rgba(139, 92, 246, 0.06) !important; }
+.hl-red { border-color: rgba(239, 68, 68, 0.18) !important; background: rgba(239, 68, 68, 0.04) !important; }
+.hl-green .st { color: #6ee7b7 !important; }
+.hl-cyan .st { color: #67e8f9 !important; }
+.hl-violet .st { color: #c4b5fd !important; }
+.hl-red .st { color: #fca5a5 !important; }
+.hl-red .ic { background: rgba(239, 68, 68, 0.12) !important; color: #f87171 !important; }
+
+/* Glow */
+.gl { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
