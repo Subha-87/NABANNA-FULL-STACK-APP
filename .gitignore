@@ -11,6 +11,9 @@ node_modules/
 .next/
 out/
 
+#old file
+ReplaceOLDComponent/
+
 # logs
 npm-debug.log*
 yarn-debug.log*
