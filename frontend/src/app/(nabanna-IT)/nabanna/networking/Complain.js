@@ -4,14 +4,15 @@ import { useAxios } from "@/app/Hook/useAxios";
 import "../../TableStyle.css";
 import { Table } from "react-bootstrap";
 
-import EditComplainBtn from "../../component/Button/EditComplainBtn";
+
+import { EditComplainBtn } from "../../component/Button/ComplainBtn";
 import Image from "next/image";
 import NoWorkImg from "../Task-Image/no-work-today-troll-dance (1).gif";
 import pageLoading from "../Task-Image/cargando-loading.gif";
 import { handleAxiosError, ErrorDisplay } from "@/app/utils/axiosError";
 import { isNew } from "@/app/NewLogic/dayLimit";
 
-const Complain = ({setData}) => {
+const Complain = ({ setData }) => {
   const [complainData, setComplainData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,7 +26,7 @@ const Complain = ({setData}) => {
         `/complain/getComplainIT/${setDomain}`,
       );
       //console.log(response);
-      setData(response.data?.data) // pass to parent to count badge notification //
+      setData(response.data?.data); // pass to parent to count badge notification //
       setComplainData(response.data?.data);
     } catch (err) {
       //console.error(err);
@@ -88,7 +89,9 @@ const Complain = ({setData}) => {
                   )}
                 </td>
                 <td className="w-[100px]">{data.designation}</td>
-                <td className="uppercase">{data.department}</td>
+                <td>
+                  <span className="uppercase">{data.department}</span>
+                </td>
 
                 <td className="w-[230px]">
                   <span className="text-red-700">

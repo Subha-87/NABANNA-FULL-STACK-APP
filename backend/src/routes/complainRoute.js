@@ -13,7 +13,7 @@ express.json() can only parse:
 
 const router = express.Router()
 
-const{postItComplainData,getAllComplain,getITComplain,getITResolvedData,updateComplain,getSolvedItComplainbyDate,getSearchAllResult,deleteITComplain} = require('../controller/complainController')
+const{postItComplainData,getAllComplain,getITComplain,getITResolvedData,updateComplain,getSolvedItComplainbyDate,getSearchAllResult,deleteITComplain,getSearchDomainResult} = require('../controller/complainController')
 
 //router.post('/postData',upload.none(),postItComplainData) if data is coming as formdata/multipart
 router.post('/postData',verifyToken,postItComplainData) // data is coming as json
@@ -38,6 +38,8 @@ router.get('/search-all-complain/:s_key',verifyToken,getSearchAllResult)
 //router.get('/solved-pc',allResolvedPCproblems)
 
 router.delete('/delete/:delId',verifyToken,deleteITComplain)
+
+router.get("/find-complain/:it_wing",verifyToken,getSearchDomainResult)
 
 
 

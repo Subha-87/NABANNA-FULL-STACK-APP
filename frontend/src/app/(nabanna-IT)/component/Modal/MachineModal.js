@@ -27,6 +27,8 @@ import {
 
 import { useAxios } from "@/app/Hook/useAxios";
 import { handleAxiosError } from "@/app/utils/axiosError";
+import MachineInfoCard from "../Cards/MachineCards/MachineInfoCard";
+import RenewalCard from "./ModalCard/RenewalCard";
 
 export const AddMachineModal = ({ isModalOpen, isModalClose, onSuccess }) => {
   const handleModal = () => {
@@ -48,11 +50,44 @@ export const MachineFilterModal = ({
   searchData,
 }) => {
   //console.log(searchData) // search data == serail/make/model but search data != username /dept no passing as props to machine table//
+  const modalStyleMachine = {
+    position: "absolute",
 
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+
+    width: "fit-content",
+    minWidth: "700px",
+    maxWidth: "90vw",
+
+    maxHeight: "85vh",
+
+    bgcolor: "#f5f7fb",
+
+    borderRadius: "18px",
+
+    boxShadow: 24,
+
+    overflowY: "auto",
+
+    p: 3,
+  };
   return (
     <Modal open={isModalOpen} onClose={isModalClose}>
-      <Box sx={modalStyle}>
-        <MachineTable showdata={searchData} />{" "}
+      <Box sx={modalStyleMachine}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+          }}
+        >
+          <MachineInfoCard
+            searchResult={searchData}
+            modalClose={isModalClose}
+          />
+        </Box>
         {/* Machine Table is common for both kind of filter data*/}
       </Box>
     </Modal>
@@ -337,6 +372,8 @@ export const StatusModal = ({ isModalOpen, isModalClose }) => {
   );
 };
 
+// Repair Modal//
+
 export const RepairModal = ({
   isModalOpen,
   isModalClose,
@@ -346,9 +383,32 @@ export const RepairModal = ({
   const handleModal = () => {
     isModalClose();
   };
+  const modalStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "fit-content",
+    minWidth: "600px", // Slightly adjusted for better proportion
+    maxWidth: "90vw",
+    maxHeight: "85vh",
+    borderRadius: "16px",
+    boxShadow:
+      "0 25px 60px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)",
+    bgcolor: "background.paper",
+    overflow: "hidden", // Keeps the corners sharp
+    display: "flex",
+    flexDirection: "column",
+    border: "1px solid #e5e7eb", // Subtle border
+    animation: "modalFadeIn 0.3s ease-out",
+  };
   return (
-    <Modal open={isModalOpen} onClose={isModalClose}>
-      <Box sx={modalStyle}>
+    <Modal open={isModalOpen} onClose={isModalClose} disableAutoFocus={true}>
+      {/* 
+        added overflowY: 'auto' to the inner Box or a wrapper 
+        so the form scrolls within the modal, but the header stays if we had one.
+      */}
+      <Box sx={{ ...modalStyle, overflowY: "auto" }}>
         <RepairForm
           edit_id={eId}
           modStat={handleModal}
@@ -358,3 +418,14 @@ export const RepairModal = ({
     </Modal>
   );
 };
+
+export const RenewModal = ({isModalOpen,isModalClose,renewData,handleRenew}) => {
+  
+  return(
+    <Modal open={isModalOpen} onClose={isModalClose}>
+       <Box sx={modalStyle}>
+          <RenewalCard onClose={isModalClose} amcData={renewData} onRenew={handleRenew}/>
+       </Box>
+    </Modal>
+  )
+}

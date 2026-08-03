@@ -70,7 +70,7 @@ const getITResolvedData = async (req, resp) => {
 const updateComplain = async (req, resp) => {
   const { edit_id } = req.params;
   const { setRemarks, status } = req.body;
-  //console.log(status);
+  //console.log(req.body);
   const updateInfo = {
     status,
     remarks: setRemarks,
@@ -100,7 +100,7 @@ const updateComplain = async (req, resp) => {
 // Filter IT Complain Data by Date Range Based on Specific Domain //
 const getSolvedItComplainbyDate = async (req, resp) => {
   const { it_wing } = req.params;
-  console.log("monthy report for :",it_wing)
+  console.log("monthy report for :", it_wing);
   try {
     const { startDate, endDate } = req.query;
     const filters = {
@@ -152,6 +152,41 @@ const getSearchAllResult = async (req, resp) => {
   }
 };
 
+// GET COMPLAIN RESULT BASED ON DOMAIN //
+const getSearchDomainResult = async (req, resp) => {
+  
+  try {
+    const { it_wing } = req.params;
+    const { query: s_key } = req.query;
+
+    let mongoQuery = { domain: it_wing };
+
+    if (s_key) {
+      const orConditions = [
+        { username: { $regex: s_key, $options: "i" } },
+        { designation: { $regex: s_key, $options: "i" } },
+        { department: { $regex: s_key, $options: "i" } },
+        { room: { $regex: s_key, $options: "i" } },
+      ];
+
+      const contact_no = Number(s_key);
+
+      if (!isNaN(contact_no)) {
+        orConditions.push({ contact: contact_no });
+      }
+
+      mongoQuery.$or = orConditions;
+    }
+
+    const result = await complainCollection.find(mongoQuery).sort({ _id: -1 });
+    if (!result.length)
+      return sendError(resp, 404, "No User Complain is Found");
+    return sendSuccess(resp, 200, "Search Result Found", result);
+  } catch (error) {
+    return sendError(resp, 500, "Internal Server Error");
+  }
+};
+// Delete IT Complain //
 const deleteITComplain = async (req, resp) => {
   try {
     const { delId } = req.params;
@@ -172,4 +207,5 @@ module.exports = {
   getSolvedItComplainbyDate,
   getSearchAllResult,
   deleteITComplain,
+  getSearchDomainResult,
 };

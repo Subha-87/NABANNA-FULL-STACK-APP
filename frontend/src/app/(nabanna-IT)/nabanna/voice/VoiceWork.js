@@ -6,9 +6,10 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/app/Hook/useAuth";
 import { useAxios } from "@/app/Hook/useAxios";
 import Image from "next/image";
-import EditBtnNet from "../../component/Button/EditBtnNet";
+import { EditBtnVoice } from "../../component/Button/EditTaskBtn";
 import "../../TableStyle.css";
-import SelfEditVoice from "../../component/Button/SelfEditVoice";
+
+import { SelfEditVoice } from "../../component/Button/SelfEditTask";
 import { handleAxiosError, ErrorDisplay } from "@/app/utils/axiosError";
 import { isNew } from "@/app/NewLogic/dayLimit";
 
@@ -74,7 +75,10 @@ const VoiceWork = ({ setData }) => {
           </thead>
           <tbody>
             {serverData.map((post, index) => (
-              <tr key={index} className={`${isNew(post.assignDate) ? "new-row" : ""}`}>
+              <tr
+                key={index}
+                className={`${isNew(post.assignDate) ? "new-row" : ""}`}
+              >
                 <td>{index + 1}</td>
                 {<td>{new Date(post.assignDate).toLocaleDateString()}</td>}
                 <td className={`w-[100px] h-[100px]  hover:cursor-pointer `}>
@@ -128,12 +132,9 @@ const VoiceWork = ({ setData }) => {
                 <td className="w-[200px]">{post.remarks}</td>
                 <td>
                   <div className="flex justify-content-evenly hover:cursor-pointer mb-2">
-                    <EditBtnNet rowVoiceData={post} />
-                    <SelfEditVoice data={post} />
+                    <EditBtnVoice rowVoiceData={post} onRefresh={getData} />
+                    <SelfEditVoice data={post} onRefresh={getData} />
                   </div>
-                  {/*<UpdateVoicedata edit_id={post._id} date={post.date} user={post.user} room={post.room} problem={post.problems} />*/}
-                  {/*<Button variant='contained' color='success' onClick={() => editModalOpen(post._id)}>UPDATE</Button>*/}
-                  {/*<Button variant='contained' color='warning' sx={{ marginLeft: "5px" }} onClick={() => handelDelete(post._id)}>Delete</Button>*/}
                 </td>
               </tr>
             ))}

@@ -20,13 +20,14 @@ const ITLogin = () => {
     "VOICE",
     "CCTV",
     "HARDWARE-APP",
-    "CONFERENCING",
+    "CATV-NABANNA",
   ];
 
   const dashboardRoutes = {
     networking: "/nabanna/networking",
     voice: "/nabanna/voice",
     "hardware-app": "/nabanna/pc-hardware",
+    "catv-nabanna":"/nabanna/catv"
   };
   const initialValues = {
     fusername: "",

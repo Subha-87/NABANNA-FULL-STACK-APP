@@ -14,6 +14,7 @@ const routeAccess = {
 };
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
+  //console.log(pathname)
 
   let matchedRoute = null;
 
@@ -116,6 +117,7 @@ export async function middleware(request) {
 };*/
 export const config = {
   matcher: [
+    //"/admin",
     "/dashboard/:path*",
     "/nabanna/:path*",
     "/upanna/:path*",

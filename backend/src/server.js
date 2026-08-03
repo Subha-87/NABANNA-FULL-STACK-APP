@@ -20,6 +20,10 @@ const aiRoutes = require("./routes/aiRoute");
 
 const messageRoutes = require("./routes/complainMsgRoute");
 
+const setTopBoxRoutes = require("./routes/boxRoute")
+
+const cablelTvRoutes = require("./routes/catvRoute")
+
 const it_app = require("./app");
 //const connectDB = require('./config/database')
 //const connectDB = require('../../shared/database')
@@ -121,13 +125,15 @@ it_app.use(
 it_app.use("/NabannaSystem", hardwareRouter);
 
 
-
+it_app.use("/NabannaTV",cablelTvRoutes)
 
 //** AI INCOMING QUERY *//
 it_app.use("/AIagent/ai", aiRoutes);
 
 // Message Routes (SMS & Whats-APP) //
 it_app.use("/publicMsg",messageRoutes)
+
+it_app.use("/nabanna",setTopBoxRoutes)
 
 
 // TEST FOR BACKEND RUNNING OR NOT // TO TEST BACKEND  in Browser :http://127.0.0.1:5000

@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useAuth } from "@/app/Hook/useAuth";
-import OfficeLogo from "../../../../../public/LoginImage/Emblem_of_West_Bengal_(2018-present).svg.png";
+import OfficeLogo from "../../../../../public/LogoImage/ashok-stambh-logo.png";
 import Image from "next/image";
 
 const ITEM_LIST = [
@@ -8,6 +8,8 @@ const ITEM_LIST = [
   "WorkStation",
   "Computer",
   "All-In-One",
+  "Laptop",
+
   "UPS",
   "RAM",
   "CPU",
@@ -33,9 +35,7 @@ const OfficeChallan = () => {
   const [toName, setToName] = useState("");
   const [department, setDepartment] = useState("");
   const [contactPerson, setContactPerson] = useState("");
-  const [suppliedFrom, setSuppliedFrom] = useState(
-    "Nabanna IT-SubDivision"
-  );
+  const [suppliedFrom, setSuppliedFrom] = useState("Nabanna IT-SubDivision");
 
   const [items, setItems] = useState([
     {
@@ -94,7 +94,7 @@ const OfficeChallan = () => {
           return { ...item, [field]: value };
         }
         return item;
-      })
+      }),
     );
   };
 
@@ -339,9 +339,9 @@ const OfficeChallan = () => {
           borderBottom: "2.5px solid #000",
           paddingBottom: "10px",
           marginBottom: "12px",
-          display:"flex",
-          flexDirection:"column",
-          alignItems:"center"
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
         <Image src={OfficeLogo} alt="Emblem" width={68} height={68} />
@@ -374,7 +374,7 @@ const OfficeChallan = () => {
             lineHeight: "1.6",
             color: "#222",
             marginTop: "4px",
-            textAlign:"center"
+            textAlign: "center",
           }}
         >
           <div style={{ fontWeight: 600 }}>Nabanna IT Sub-Division, PWD</div>
@@ -431,25 +431,17 @@ const OfficeChallan = () => {
       </div>
       <div style={{ fontSize: "12px", marginBottom: "4px", lineHeight: "1.7" }}>
         <span style={{ fontWeight: 700 }}>Department: </span>
-        <span style={{ fontWeight: 600 }}>
-          {department || "________"}
-        </span>
+        <span style={{ fontWeight: 600 }}>{department || "________"}</span>
       </div>
-      <div
-        style={{ fontSize: "12px", marginBottom: "4px", lineHeight: "1.7" }}
-      >
+      <div style={{ fontSize: "12px", marginBottom: "4px", lineHeight: "1.7" }}>
         <span style={{ fontWeight: 700 }}>Contact Person: </span>
-        <span style={{ fontWeight: 600 }}>
-          {contactPerson || "________"}
-        </span>
+        <span style={{ fontWeight: 600 }}>{contactPerson || "________"}</span>
       </div>
       <div
         style={{ fontSize: "12px", marginBottom: "12px", lineHeight: "1.7" }}
       >
         <span style={{ fontWeight: 700 }}>Supplied From: </span>
-        <span style={{ fontWeight: 600 }}>
-          {suppliedFrom || "________"}
-        </span>
+        <span style={{ fontWeight: 600 }}>{suppliedFrom || "________"}</span>
       </div>
 
       {/* Item Table — 6 columns now */}
@@ -742,8 +734,7 @@ const OfficeChallan = () => {
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = "translateY(-1px)";
-            e.currentTarget.style.boxShadow =
-              "0 5px 18px rgba(192,57,43,0.5)";
+            e.currentTarget.style.boxShadow = "0 5px 18px rgba(192,57,43,0.5)";
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = "translateY(0)";
@@ -1044,7 +1035,11 @@ const OfficeChallan = () => {
                 <div style={{ marginBottom: "10px" }}>
                   <label style={labelStyle}>Item Name</label>
                   <select
-                    style={{ ...inputStyle, cursor: "pointer", marginBottom: "6px" }}
+                    style={{
+                      ...inputStyle,
+                      cursor: "pointer",
+                      marginBottom: "6px",
+                    }}
                     value={item.itemName}
                     onChange={(e) =>
                       updateItem(item.id, "itemName", e.target.value)
@@ -1135,7 +1130,11 @@ const OfficeChallan = () => {
                   <div>
                     <label style={labelStyle}>Qty</label>
                     <select
-                      style={{ ...inputStyle, cursor: "pointer", padding: "9px 6px" }}
+                      style={{
+                        ...inputStyle,
+                        cursor: "pointer",
+                        padding: "9px 6px",
+                      }}
                       value={item.quantity}
                       onChange={(e) =>
                         updateItem(item.id, "quantity", Number(e.target.value))

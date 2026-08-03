@@ -77,6 +77,7 @@ const ComplainForm = ({ modStat, onSuccess }) => {
     try {
       const { data: dbResponse } = await axios.post("/complain/postData", values, { timeout: 10000 });
 
+      /* SMS/Whastapp notification submission//
       const notifications = [await axios.post("/publicMsg/send-sms", values)];
       const result = await Promise.allSettled(notifications);
 
@@ -84,7 +85,10 @@ const ComplainForm = ({ modStat, onSuccess }) => {
       let message = "Complaint submitted successfully";
       if (smsResult.status === "fulfilled") {
         message = smsResult.value.data.message;
-      }
+        
+      }*/
+      //console.log(dbResponse)
+      const message = dbResponse.message
 
       toast.success(message || "Complaint submitted successfully");
       onSuccess();

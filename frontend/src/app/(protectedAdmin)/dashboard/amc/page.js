@@ -7,7 +7,7 @@ export default function Page() {
       style={{ backgroundColor: "#D9EAFD" }}
     >
       <div>
-        <ButtonAMC/>
+        <ButtonAMC />
       </div>
       <AmcTab />
     </div>

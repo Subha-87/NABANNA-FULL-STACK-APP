@@ -60,8 +60,8 @@ const EditMachine = ({ editData, modStat, refreshData }) => {
       resetForm();
       modStat();
     } catch (error) {
-      const { generarlError } = handleAxiosError(error);
-      toast.error(generarlError || "Something Went Wrong");
+      const { generalError } = handleAxiosError(error);
+      toast.error(generalError || "Something Went Wrong");
     } finally {
       setSubmitting(false);
     }

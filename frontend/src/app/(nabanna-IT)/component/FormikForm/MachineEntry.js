@@ -35,6 +35,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ComputerIcon from "@mui/icons-material/Computer";
 import AddIcon from "@mui/icons-material/Add";
+import { HARDWARE_OPTIONS } from "./Helper/hardwareOption";
 
 const MachineEntry = ({ onSuccess, modStat }) => {
   const axios = useAxios();
@@ -47,6 +48,7 @@ const MachineEntry = ({ onSuccess, modStat }) => {
   };
 
   const MACHINE_TYPES = [
+    "ALL_IN_ONE",
     "CPU",
     "MONITOR",
     "UPS",
@@ -54,6 +56,7 @@ const MachineEntry = ({ onSuccess, modStat }) => {
     "SCANNER",
     "LAPTOP",
   ];
+
   const vendor = ["PASCAL", "AIRCON", "SOFTLINK", "APPLET", "TRANSCON"];
 
   const baseSystemData = {
@@ -66,7 +69,20 @@ const MachineEntry = ({ onSuccess, modStat }) => {
     warrantyType: "WARRANTY",
     date: "",
     supplier: "",
-    machineDetails: [{ name: "", model: "", make: "", serial: [""] }],
+    //machineDetails: [{ name: "", model: "", make: "", serial: [""] }],
+    machineDetails: [
+      {
+        name: "",
+        model: "",
+        otherModel: "",
+        make: "",
+        otherMake: "",
+        capacity: "",
+        otherCapacity: "",
+        serial: [""],
+        warrantyYears: 3,
+      },
+    ],
   };
 
   const machineSchema = Yup.object().shape({
@@ -98,13 +114,23 @@ const MachineEntry = ({ onSuccess, modStat }) => {
   });
 
   const handleMachineEntry = async (values, { resetForm, setSubmitting }) => {
+    //console.log("Sending Data:",values)
     try {
-      const resp = await axios.post("/NabannaSystem", values);
+      const payload = {
+        ...values,
+        machineDetails: values.machineDetails.map((item) => ({
+          ...item,
+          make: item.make === "Other" ? item.otherMake : item.make,
+
+          model: item.model === "Other" ? item.otherModel : item.model,
+        })),
+      };
+      const resp = await axios.post("/NabannaSystem", payload);
       const success_msg = resp.data?.message || "Entry Successful";
       SweetSwal.fire({ title: success_msg, icon: "success", draggable: true });
       onSuccess();
-      resetForm();
-      modStat(true); // Standardized close trigger
+      //resetForm();
+      //modStat(true); // Standardized close trigger
     } catch (error) {
       const { generalError } = handleAxiosError(error);
       toast.error(generalError || "Something went wrong!");
@@ -237,10 +263,10 @@ const MachineEntry = ({ onSuccess, modStat }) => {
           <Box
             sx={{
               flex: "1 1 0%",
-              minHeight: 0,
-              minWidth: 0,          // <-- ADD THIS
+              maxHeight: 500,
+              // <-- ADD THIS
               overflowY: "auto",
-              overflowX: "hidden",  // <-- ADD THIS
+              overflowX: "hidden", // <-- ADD THIS
               padding: "28px",
               display: "block",
               boxSizing: "border-box",
@@ -252,7 +278,15 @@ const MachineEntry = ({ onSuccess, modStat }) => {
             }}
           >
             {/* 1. USER DETAILS GRID (Strict Single Row) */}
-            <Grid container spacing={2} sx={{ mb: 3,justifyContent:"space-between", alignItems: "flex-start" }}>
+            <Grid
+              container
+              spacing={2}
+              sx={{
+                mb: 3,
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+              }}
+            >
               <Grid item xs="auto">
                 <SectionLabel
                   icon={<PersonOutlineIcon sx={{ fontSize: 16 }} />}
@@ -324,7 +358,15 @@ const MachineEntry = ({ onSuccess, modStat }) => {
               </Grid>
             </Grid>
 
-            <Grid container spacing={2} sx={{ mb: 3,justifyContent:"space-between",alignItems: "flex-start" }}>
+            <Grid
+              container
+              spacing={2}
+              sx={{
+                mb: 3,
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+              }}
+            >
               <Grid item xs="auto">
                 <SectionLabel
                   icon={<MeetingRoomIcon sx={{ fontSize: 16 }} />}
@@ -401,7 +443,13 @@ const MachineEntry = ({ onSuccess, modStat }) => {
 
             {/* 2. WARRANTY ROW (Single Row, Green/Red Borders) */}
             <Box
-              sx={{ display: "flex", gap: 2, mb: 3, justifyContent:"space-between", alignItems: "flex-start" }}
+              sx={{
+                display: "flex",
+                gap: 2,
+                mb: 3,
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+              }}
             >
               <Box sx={{ width: "200px", flexShrink: 0 }}>
                 <SectionLabel
@@ -547,229 +595,295 @@ const MachineEntry = ({ onSuccess, modStat }) => {
                   );
                   return (
                     <Box
-                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                        maxHeight: 300,
+                        overflow: "auto",
+                      }}
                     >
-                      {values.machineDetails.map((machine, index) => (
-                        <Box
-                          key={index}
-                          sx={{
-                            display: "flex",
-                            gap: 1.5,
-                            p: 2,
-                            border: "1px solid #e2e8f0",
-                            borderRadius: "12px",
-                            backgroundColor: "#fafafa",
-                            alignItems: "flex-start",
-                            flexWrap: "wrap", // <-- ADD THIS
-                          }}
-                        >
-                          <Typography
+                      {values.machineDetails.map((machine, index) => {
+                        const type = machine.name;
+                        const options = HARDWARE_OPTIONS[type];
+
+                        return (
+                          <Box
+                            key={index}
                             sx={{
-                              minWidth: "25px",
-                              fontWeight: 700,
-                              color: "#334155",
-                              fontSize: "14px",
-                              mt: 1,
+                              display: "flex",
+                              gap: 1.5,
+                              p: 2,
+                              border: "1px solid #e2e8f0",
+                              borderRadius: "12px",
+                              backgroundColor: "#fafafa",
+                              alignItems: "flex-start",
+                              flexWrap: "wrap", // <-- ADD THIS
                             }}
                           >
-                            {index + 1}.
-                          </Typography>
-
-                          {/* System Type */}
-                          <Box sx={{ flex: "1 1 140px", minWidth: 0 }}>
-                            <Field name={`machineDetails.${index}.name`}>
-                              {({ field, meta }) => (
-                                <FormControl
-                                  fullWidth
-                                  size="small"
-                                  error={meta.touched && Boolean(meta.error)}
-                                >
-                                  <InputLabel>Type</InputLabel>
-                                  <Select
-                                    {...field}
-                                    label="Type"
-                                    sx={miniInputSx}
-                                  >
-                                    <MenuItem value="">Select</MenuItem>
-                                    {MACHINE_TYPES.map((type) => (
-                                      <MenuItem
-                                        key={type}
-                                        value={type}
-                                        disabled={
-                                          selectedSystems.includes(type) &&
-                                          machine.name !== type
-                                        }
-                                      >
-                                        {type}
-                                      </MenuItem>
-                                    ))}
-                                  </Select>
-                                  {meta.touched && meta.error && (
-                                    <FieldError text={meta.error} />
-                                  )}
-                                </FormControl>
-                              )}
-                            </Field>
-                          </Box>
-
-                          {/* Model */}
-                          <Box sx={{ flex: "1 1 140px", minWidth: 0 }}>
-                            <Field name={`machineDetails.${index}.model`}>
-                              {({ field }) => (
-                                <TextField
-                                  {...field}
-                                  fullWidth
-                                  size="small"
-                                  placeholder="Model"
-                                  sx={miniInputSx}
-                                />
-                              )}
-                            </Field>
-                          </Box>
-
-                          {/* Make */}
-                          <Box sx={{ flex: "1 1 140px", minWidth: 0 }}>
-                            <Field name={`machineDetails.${index}.make`}>
-                              {({ field, meta }) => (
-                                <TextField
-                                  {...field}
-                                  fullWidth
-                                  size="small"
-                                  placeholder="Make"
-                                  error={meta.touched && Boolean(meta.error)}
-                                  helperText={
-                                    meta.touched && meta.error
-                                      ? meta.error
-                                      : " "
-                                  }
-                                  sx={miniInputSx}
-                                />
-                              )}
-                            </Field>
-                          </Box>
-
-                          {/* Serial No (Flex: 2 to give it more space for CPU arrays) */}
-                          <Box sx={{ flex: "2 1 220px", minWidth: 0 }}>
-                            {machine.name === "CPU" ? (
-                              <FieldArray
-                                name={`machineDetails.${index}.serial`}
-                              >
-                                {({ push, remove }) => (
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      flexDirection: "column",
-                                      gap: 1,
-                                    }}
-                                  >
-                                    <Typography
-                                      sx={{
-                                        fontSize: "11px",
-                                        fontWeight: 700,
-                                        color: "#64748b",
-                                        textTransform: "uppercase",
-                                      }}
-                                    >
-                                      Serial No(s)
-                                    </Typography>
-                                    {machine.serial.map((s, i) => (
-                                      <Box
-                                        key={i}
-                                        sx={{
-                                          display: "flex",
-                                          gap: 0.5,
-                                          alignItems: "center",
-                                        }}
-                                      >
-                                        <Field
-                                          name={`machineDetails.${index}.serial.${i}`}
-                                        >
-                                          {({ field }) => (
-                                            <TextField
-                                              {...field}
-                                              size="small"
-                                              placeholder={`S-${i + 1}`}
-                                              sx={miniInputSx}
-                                            />
-                                          )}
-                                        </Field>
-                                        {i > 0 && (
-                                          <IconButton
-                                            size="small"
-                                            onClick={() => remove(i)}
-                                            sx={{ color: "#ef4444", p: 0.5 }}
-                                          >
-                                            <DeleteOutlineIcon
-                                              sx={{ fontSize: 16 }}
-                                            />
-                                          </IconButton>
-                                        )}
-                                      </Box>
-                                    ))}
-                                    <Button
-                                      size="small"
-                                      startIcon={
-                                        <AddIcon sx={{ fontSize: 14 }} />
-                                      }
-                                      onClick={() => push("")}
-                                      sx={{
-                                        fontSize: "11px",
-                                        color: "#334155",
-                                        p: 0.25,
-                                        textTransform: "none",
-                                        "&:hover": {
-                                          backgroundColor: "#f1f5f9",
-                                        },
-                                      }}
-                                    >
-                                      Add Serial
-                                    </Button>
-                                  </Box>
-                                )}
-                              </FieldArray>
-                            ) : (
-                              <Field name={`machineDetails.${index}.serial`}>
-                                {({ field }) => (
-                                  <TextField
-                                    {...field}
-                                    fullWidth
-                                    size="small"
-                                    placeholder="Serial No"
-                                    value={
-                                      Array.isArray(field.value)
-                                        ? field.value[0]
-                                        : field.value
-                                    }
-                                    onChange={(e) =>
-                                      setFieldValue(
-                                        `machineDetails.${index}.serial`,
-                                        [e.target.value],
-                                      )
-                                    }
-                                    sx={miniInputSx}
-                                  />
-                                )}
-                              </Field>
-                            )}
-                          </Box>
-
-                          {/* Delete Machine Button */}
-                          {index > 0 && (
-                            <IconButton
-                              onClick={() => remove(index)}
+                            <Typography
                               sx={{
-                                color: "#ef4444",
-                                backgroundColor: "#fef2f2",
-                                mt: 0.5,
-                                flexShrink: 0,
-                                "&:hover": { backgroundColor: "#fee2e2" },
+                                minWidth: "25px",
+                                fontWeight: 700,
+                                color: "#334155",
+                                fontSize: "14px",
+                                mt: 1,
                               }}
                             >
-                              <DeleteOutlineIcon fontSize="small" />
-                            </IconButton>
-                          )}
-                        </Box>
-                      ))}
+                              {index + 1}.
+                            </Typography>
+
+                            {/* System Type */}
+                            <Box sx={{ flex: "1 1 140px", minWidth: 0 }}>
+                              <Field name={`machineDetails.${index}.name`}>
+                                {({ field, meta }) => (
+                                  <FormControl
+                                    fullWidth
+                                    size="small"
+                                    error={meta.touched && Boolean(meta.error)}
+                                  >
+                                    <InputLabel>Type</InputLabel>
+                                    <Select
+                                      {...field}
+                                      label="Type"
+                                      sx={miniInputSx}
+                                    >
+                                      <MenuItem value="">Select</MenuItem>
+                                      {MACHINE_TYPES.map((type) => (
+                                        <MenuItem
+                                          key={type}
+                                          value={type}
+                                          disabled={
+                                            selectedSystems.includes(type) &&
+                                            machine.name !== type
+                                          }
+                                        >
+                                          {type}
+                                        </MenuItem>
+                                      ))}
+                                    </Select>
+                                    {meta.touched && meta.error && (
+                                      <FieldError text={meta.error} />
+                                    )}
+                                  </FormControl>
+                                )}
+                              </Field>
+                            </Box>
+
+                            {/* Model */}
+                            <Box sx={{ flex: "1 1 160px", minWidth: 0 }}>
+                              {options?.models?.length > 0 ? (
+                                <Field
+                                  as="select"
+                                  name={`machineDetails.${index}.model`}
+                                  className="border p-1 rounded"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+
+                                    setFieldValue(
+                                      `machineDetails.${index}.model`,
+                                      value,
+                                    );
+
+                                    const selected = options.models.find(
+                                      (m) => m.name === value,
+                                    );
+
+                                    if (selected) {
+                                      setFieldValue(
+                                        `machineDetails.${index}.warrantyYears`, // Auto Selected for model warranty //
+                                        selected.warranty,
+                                      );
+                                    }
+                                  }}
+                                >
+                                  <option value="">Select Model</option>
+
+                                  {options.models.map((m) => (
+                                    <option key={m.name} value={m.name}>
+                                      {m.name}
+                                    </option>
+                                  ))}
+                                </Field>
+                              ) : (
+                                <Field
+                                  name={`machineDetails.${index}.model`}
+                                  placeholder="Model"
+                                  className="border p-1 rounded"
+                                />
+                              )}
+                            </Box>
+
+                            {machine.name === "UPS" && (
+                              <Field
+                                as="select"
+                                name={`machineDetails.${index}.capacity`}
+                                className="border p-1 rounded"
+                              >
+                                <option value="">Capacity</option>
+
+                                {options.capacity.map((cap) => (
+                                  <option key={cap} value={cap}>
+                                    {cap}
+                                  </option>
+                                ))}
+                              </Field>
+                            )}
+
+                            {/* Make */}
+                            <Field
+                              as="select"
+                              name={`machineDetails.${index}.make`}
+                              className="border p-1 rounded"
+                            >
+                              <option value="">Select Make</option>
+
+                              {options?.makes.map((make) => (
+                                <option key={make} value={make}>
+                                  {make}
+                                </option>
+                              ))}
+                            </Field>
+
+                            {machine.make === "Other" && (
+                              <Field
+                                name={`machineDetails.${index}.otherMake`}
+                                placeholder="Enter Make"
+                                className="border p-1 rounded"
+                              />
+                            )}
+
+                            {machine.model === "Other" && (
+                              <Field
+                                name={`machineDetails.${index}.otherModel`}
+                                placeholder="Enter Model"
+                                className="border p-1 rounded"
+                              />
+                            )}
+
+                            {/* Serial No (Flex: 2 to give it more space for CPU arrays) */}
+                            <Box sx={{ flex: "2 1 140px", minWidth: 0 }}>
+                              {machine.name === "CPU" ? (
+                                <FieldArray
+                                  name={`machineDetails.${index}.serial`}
+                                >
+                                  {({ push, remove }) => (
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: 1,
+                                      }}
+                                    >
+                                      <Typography
+                                        sx={{
+                                          fontSize: "11px",
+                                          fontWeight: 700,
+                                          color: "#64748b",
+                                          textTransform: "uppercase",
+                                        }}
+                                      >
+                                        Serial No(s)
+                                      </Typography>
+                                      {machine.serial.map((s, i) => (
+                                        <Box
+                                          key={i}
+                                          sx={{
+                                            display: "flex",
+                                            gap: 0.5,
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          <Field
+                                            name={`machineDetails.${index}.serial.${i}`}
+                                          >
+                                            {({ field }) => (
+                                              <TextField
+                                                {...field}
+                                                size="small"
+                                                placeholder={`S-${i + 1}`}
+                                                sx={miniInputSx}
+                                              />
+                                            )}
+                                          </Field>
+                                          {i > 0 && (
+                                            <IconButton
+                                              size="small"
+                                              onClick={() => remove(i)}
+                                              sx={{ color: "#ef4444", p: 0.5 }}
+                                            >
+                                              <DeleteOutlineIcon
+                                                sx={{ fontSize: 16 }}
+                                              />
+                                            </IconButton>
+                                          )}
+                                        </Box>
+                                      ))}
+                                      <Button
+                                        size="small"
+                                        startIcon={
+                                          <AddIcon sx={{ fontSize: 14 }} />
+                                        }
+                                        onClick={() => push("")}
+                                        sx={{
+                                          fontSize: "11px",
+                                          color: "#334155",
+                                          p: 0.25,
+                                          textTransform: "none",
+                                          "&:hover": {
+                                            backgroundColor: "#f1f5f9",
+                                          },
+                                        }}
+                                      >
+                                        Add Serial
+                                      </Button>
+                                    </Box>
+                                  )}
+                                </FieldArray>
+                              ) : (
+                                <Field name={`machineDetails.${index}.serial`}>
+                                  {({ field }) => (
+                                    <TextField
+                                      {...field}
+                                      fullWidth
+                                      size="small"
+                                      placeholder="Serial No"
+                                      value={
+                                        Array.isArray(field.value)
+                                          ? field.value[0]
+                                          : field.value
+                                      }
+                                      onChange={(e) =>
+                                        setFieldValue(
+                                          `machineDetails.${index}.serial`,
+                                          [e.target.value],
+                                        )
+                                      }
+                                      sx={miniInputSx}
+                                    />
+                                  )}
+                                </Field>
+                              )}
+                            </Box>
+
+                            {/* Delete Machine Button */}
+                            {index > 0 && (
+                              <IconButton
+                                onClick={() => remove(index)}
+                                sx={{
+                                  color: "#ef4444",
+                                  backgroundColor: "#fef2f2",
+                                  mt: 0.5,
+                                  flexShrink: 0,
+                                  "&:hover": { backgroundColor: "#fee2e2" },
+                                }}
+                              >
+                                <DeleteOutlineIcon fontSize="small" />
+                              </IconButton>
+                            )}
+                          </Box>
+                        );
+                      })}
                     </Box>
                   );
                 }}

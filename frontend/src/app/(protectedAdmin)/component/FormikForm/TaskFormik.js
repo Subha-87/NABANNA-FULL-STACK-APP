@@ -49,7 +49,7 @@ const TaskFormik = ({ rowTask, modalStat, onRefresh }) => {
     ],
     Voice: ["Telephone Connection", "New Telephone Set"],
     "PC-Peripherals": ["Computer Set", "Laptop", "Printer"],
-    "Cable TV": ["Cable Connection", "Set Top Box"],
+    "Cable TV": ["Cable Connection New", "Set Top Box New"],
     Conference: ["Conference Setup", "Microphone Issue"],
     "Net & Voice": ["Lan & Telephone Connection"],
   };
@@ -73,11 +73,19 @@ const TaskFormik = ({ rowTask, modalStat, onRefresh }) => {
     { value: "Low", label: "Low", color: "#22c55e", bg: "#dcfce7" },
   ];
 
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   const newfieldValue = {
     itTask: "",
     lettertype: [],
     it_personnel: "",
-    assignDate: "",
+    assignDate: getTodayDate(),
     p_level: "",
   };
   const primaryValue = { ...rowTask, ...newfieldValue };
@@ -100,10 +108,13 @@ const TaskFormik = ({ rowTask, modalStat, onRefresh }) => {
   const TASK_API_MAP = {
     Internet: "/TaskData/netTask",
     Voice: "/voiceTask/setTask",
+    "Cable TV":"/NabannaTV/postTask"
+    
   };
 
   const handleSetTask = async (values, { resetForm, setSubmitting }) => {
     const { it_personnel, itTask, _id } = values;
+    //console.log(values)
     try {
       let taskPromise = [];
       if (itTask === "Net & Voice") {

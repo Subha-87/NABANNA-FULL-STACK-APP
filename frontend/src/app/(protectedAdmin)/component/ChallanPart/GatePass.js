@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import Image from 'next/image'
-import OfficeLogo from "../../../../../public/LoginImage/Emblem_of_West_Bengal_(2018-present).svg.png"
+import OfficeLogo from "../../../../../public/LogoImage/ashok-stambh-logo.png"
 
 const GatePass = () => {
   const printRef = useRef(null)
@@ -63,7 +63,7 @@ const GatePass = () => {
 
   /* ───── Print Handler ───── */
   const handlePrint = () => {
-    const logoUrl = window.location.origin + '/LoginImage/Emblem_of_West_Bengal_(2018-present).svg.png'
+    const logoUrl = window.location.origin + '/LogoImage/ashok-stambh-logo.png'
 
     const buildCopy = (label) => `
       <div style="padding:12px;border:2px solid #000;font-family:'Times New Roman',Times,serif;height:100%;box-sizing:border-box;">

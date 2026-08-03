@@ -1,0 +1,49 @@
+/* Form.css - Scrollbar ONLY for modal content */
+
+/* This targets only the scrollable content area */
+.modal-scroll-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-scroll-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.modal-scroll-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #1a237e, #3949ab);
+  border-radius: 10px;
+}
+
+.modal-scroll-content::-webkit-scrollbar-thumb:hover {
+  background: #283593;
+}
+
+.modal-scroll-content {
+  scrollbar-width: thin;
+  scrollbar-color: #3949ab #f1f1f1;
+}
+
+/* ===== Image Overlay Hover Effect ===== */
+.image-overlay:hover {
+  opacity: 1 !important;
+}
+
+/* ===== Smooth Transitions for Image Viewer ===== */
+.challan-image-container {
+  transition: all 0.3s ease;
+}
+
+.challan-image-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(26, 35, 126, 0.15);
+}
+
+/* ===== Full Screen Dialog Image ===== */
+.dialog-image {
+  cursor: grab;
+}
+
+.dialog-image:active {
+  cursor: grabbing;
+}

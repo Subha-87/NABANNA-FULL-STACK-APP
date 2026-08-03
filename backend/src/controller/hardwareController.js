@@ -1,4 +1,6 @@
 const hardwareCollection = require("../models/hardwareModel");
+const amcCollection = require("../models/amcMaster");
+const amcModel = require("../models/amcMaster");
 const systemRepairCollection = require("../models/repairModel");
 const { sendSuccess, sendError } = require("../utils/apiResponse");
 
@@ -19,8 +21,6 @@ const getAllData = async (req, resp) => {
 
 // POST NEW SYSTEM for NABANNA with warranty/AMC
 const createHardwareSetup = async (req, res) => {
-  console.log("getting post request..");
-  console.log(req.body);
   try {
     const {
       date,
@@ -40,7 +40,7 @@ const createHardwareSetup = async (req, res) => {
     //const installationDate = new Date(`${year}-${month}-${day}`);
     // 🔁 Convert array → object
     // 🔥 NORMALIZE SERIAL HERE
-    machineDetails.forEach((item) => {
+    /**machineDetails.forEach((item) => {
       if (item.name === "CPU") {
         // CPU → must be array
         if (!Array.isArray(item.serial)) {
@@ -64,7 +64,7 @@ const createHardwareSetup = async (req, res) => {
       };
     });
     // 📅 Handle installation date conditionally
-    let installationDate = null;
+    /** let installationDate = null;
 
     let amcStatus = "NONE";
     if (warrantyType === "AMC") {
@@ -80,7 +80,66 @@ const createHardwareSetup = async (req, res) => {
         // If date is YYYY-MM-DD (HTML date input)
         installationDate = new Date(date);
       }
+    }**/
+
+    
+
+    let installDate = null;
+
+    if (date) {
+      if (date.includes("/")) {
+        const [day, month, year] = date.split("/");
+        installDate = new Date(`${year}-${month}-${day}`);
+      } else {
+        installDate = new Date(date);
+      }
     }
+
+    const systems = {};
+
+    machineDetails.forEach((item) => {
+      const key = item.name.toUpperCase();
+
+      // CPU serial can be array
+      let serial = item.serial;
+
+      if (key === "CPU") {
+        if (!Array.isArray(serial)) {
+          serial = [serial];
+        }
+      } else {
+        if (Array.isArray(serial)) {
+          serial = serial[0];
+        }
+      }
+
+      let warrantyYears = null;
+      if (warrantyType === "WARRANTY") {
+        const defaultWarranty = {
+          CPU: 3,
+          MONITOR: 3,
+          LAPTOP: 3,
+          ALL_IN_ONE: 3,
+          UPS: 1,
+        };
+        warrantyYears = Number(item.warrantyYears) || defaultWarranty[key];
+      }
+
+      systems[key] = {
+        model: item.model,
+        make: item.make,
+        serial,
+
+        installationDate: warrantyType === "WARRANTY" ? installDate : null,
+
+        warrantyYears,
+
+        warrantyType,
+
+        amcStatus: "NONE",
+        amcContract: null,
+      };
+    });
 
     const payload = {
       employeeName: username,
@@ -89,9 +148,6 @@ const createHardwareSetup = async (req, res) => {
       roomNo: room,
       department,
       floor,
-      warrantyType,
-      amcStatus, // 👈 explicitly set
-      installationDate,
       supplier,
       systems,
     };
@@ -100,6 +156,7 @@ const createHardwareSetup = async (req, res) => {
 
     return sendSuccess(res, 201, "System is Entered Successfully", result);
   } catch (error) {
+    console.error(error);
     return sendError(res, 500, "Internal Server Error");
   }
 };
@@ -201,7 +258,8 @@ const exportAmcSystems = async (req, resp) => {
 // ** FIND Single NABANNA SYSTEM BASED ON SERIAL **//
 const searchHardware = async (req, res) => {
   try {
-    // Get the System (CPU/MONITOR,PRINTER,LAPTOP etc) & respictive value(Serial/Model or Make)
+    // Get the System (ALL-in-One,CPU/MONITOR,PRINTER,LAPTOP etc) & respictive value(Serial/Model or Make)
+    //console.log(req.query)
     const { system, value } = req.query;
 
     if (!system || !value)
@@ -223,9 +281,18 @@ const searchHardware = async (req, res) => {
       ],*/
     });
     //console.log(!!result.length)
+    //console.log(result)
     if (!result) return sendError(res, 404, "No Such Machine Found in Nabanna");
-    return sendSuccess(res, 200, "System Found", [result]);
+    //return sendSuccess(res, 200, "System Found", result);
+    return res.status(200).json({
+      success: true,
+      message: "System Found",
+      matchedDevice: sys,
+      matchedValue: value,
+      data: result,
+    });
   } catch (err) {
+    //console.log(err)
     return sendError(res, 500, "Internal Server Error");
   }
 };
@@ -282,6 +349,44 @@ const removeRepairData = async (req, resp) => {
     return sendError(resp, 500, "Internal Server Error");
   }
 };
+
+// When Renwal Button Clicked on UI//
+const getAMCData = async (req, resp) => {
+  try {
+    const contract = await amcCollection.findOne({ status: "ACTIVE" });
+    if (!contract) return sendError(resp, 404, "No Active AMC Contract Found");
+    const totalMachines = await hardwareCollection.countDocuments({
+      $or: [
+        { "systems.CPU.warrantyType": "AMC" },
+        { "systems.MONITOR.warrantyType": "AMC" },
+        { "systems.ALL_IN_ONE.warrantyType": "AMC" },
+        { "systems.LAPTOP.warrantyType": "AMC" },
+        { "systems.UPS.warrantyType": "AMC" },
+        { "systems.PRINTER.warrantyType": "AMC" },
+        { "systems.SCANNER.warrantyType": "AMC" },
+      ],
+    });
+    const endDate = new Date(contract.startDate);
+    endDate.setFullYear(endDate.getFullYear() + contract.durationYears);
+    endDate.setDate(endDate.getDate() - 1);
+    return sendSuccess(resp, 200, "AMC Found", {
+      contractName: contract.contractName,
+      vendor: contract.vendor,
+      contractNo: contract.contractNo,
+      startDate: contract.startDate,
+      endDate,
+      status: contract.status,
+      machineCovered: totalMachines,
+    });
+  } catch (error) {
+    console.error(error);
+    return sendError(resp, 500, "Internal Server Error");
+  }
+};
+
+// When Renewal Modal Open and activate Renew AMC Button//
+const renewAMCData = async (req, resp) => {};
+
 module.exports = {
   getAllData,
   createHardwareSetup,
@@ -294,4 +399,5 @@ module.exports = {
   getRepairData,
   editRepairData,
   removeRepairData,
+  getAMCData,
 };

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useAuth } from "@/app/Hook/useAuth";
-import letterLogo from "../../../../../public/LoginImage/Emblem_of_West_Bengal_(2018-present).svg.png";
+import letterLogo from "../../../../../public/LogoImage/logoIndia.png"
 import Image from "next/image";
 
 const toOptions = [

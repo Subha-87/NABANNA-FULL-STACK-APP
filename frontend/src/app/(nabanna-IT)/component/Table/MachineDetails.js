@@ -4,7 +4,7 @@ import {
   WarrantyColor,
   HardwareCell,
   systemConditionColor,
-  getEffectiveAmcStatus,
+  
 } from "./Resuable/portableFunction";
 import { EditSystem } from "../Button/NabannaSystemBtn";
 import MachineTable from "./MachineTable";

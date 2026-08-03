@@ -4,16 +4,16 @@ import { Table } from "react-bootstrap";
 import { useAxios } from "@/app/Hook/useAxios";
 import { useAuth } from "@/app/Hook/useAuth";
 import Image from "next/image";
-import EditBtnNet from "../../component/Button/EditBtnNet";
+import { EditBtnNet } from "../../component/Button/EditTaskBtn";
 
-import { Button } from "@mui/material";
 import { useState, useEffect } from "react";
 import "../../TableStyle.css";
-import SelfEditNet from "../../component/Button/SelfEditNet";
+
+import { SelfEditNet } from "../../component/Button/SelfEditTask";
 import { handleAxiosError, ErrorDisplay } from "@/app/utils/axiosError";
 import { isNew } from "@/app/NewLogic/dayLimit";
 
-const NetWork = ({setData}) => {
+const NetWork = ({ setData }) => {
   const { authName } = useAuth();
   const axios = useAxios();
   const [task, setTask] = useState([]);
@@ -26,8 +26,8 @@ const NetWork = ({setData}) => {
     try {
       const response = await axios.get(`/TaskData/showNetTask/${user}`);
       //console.log(response);
-      const fetchedTask = response.data?.data
-      setTask(fetchedTask);//1st data rendered in ui table
+      const fetchedTask = response.data?.data;
+      setTask(fetchedTask); //1st data rendered in ui table
       setData(fetchedTask); //2nd send parent to badge notification and show it on tab display //
     } catch (err) {
       const { generalError } = handleAxiosError(err);

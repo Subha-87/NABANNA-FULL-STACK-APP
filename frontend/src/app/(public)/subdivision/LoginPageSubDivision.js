@@ -5,7 +5,7 @@ import NabannaImg from "../../../../public/SlideImage/Nabanna_(নবান্�
 import WritersImg from "../../../../public/SlideImage/writers-building-kolkata-tourism-entry-fee-timings-holidays-reviews-header.jpg";
 import AliporeImg from "../../../../public/SlideImage/1681456745_dhono.jpg";
 import LoginContainer from "./LoginContainer";
-import BiswaBangla from "../../../../public/LoginImage/Emblem_of_West_Bengal_(2018-present).svg.png";
+import GovtLogo from "../../../../public/LogoImage/ChatGPT Image May 12, 2026, 05_06_07 PM.png";
 import { Suspense } from "react";
 import "./mainShow.css";
 
@@ -42,24 +42,21 @@ const LoginPageSubDivision = ({ subdivision }) => {
         transition={{ duration: 0.6 }}
         className="relative z-10 w-full max-w-sm bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl p-8 shadow-xl"
       >
-       
-          <div className="flex justify-center items-center">
-            <Image
-              src={BiswaBangla}
-              alt="Biswa Bangla Logo"
-              height={90}
-              width={90}
-            />
-          </div>
-          <div className="loginTitle">
-            IT Personnel Login
-          </div>
+        <div className="flex justify-center items-center">
+          <Image
+            src={GovtLogo}
+            alt="Ashok Stambh"
+            height={100}
+            width={90}
+            style={{ marginBottom: -35 }}
+          />
+        </div>
+        <div className="loginTitle">IT Personnel Login</div>
 
-          <Suspense fallback={null}>
-            <LoginContainer subdivision={subdivision} />
-          </Suspense>
-          <div className="divisionTitle"> {data.title}</div>
-      
+        <Suspense fallback={null}>
+          <LoginContainer subdivision={subdivision} />
+        </Suspense>
+        <div className="divisionTitle"> {data.title}</div>
       </motion.div>
     </div>
   );

@@ -60,7 +60,7 @@ const TabPage = () => {
   ];
 
   return (
-    <Tabs defaultActiveKey="User Complain" className="custom-tabs" fill>
+    <Tabs defaultActiveKey="Nabanna Letter" className="custom-tabs" fill>
       {tabsConfig.map((tab, i) => {
         const count = tab.data ? getPendingCount(tab.data) : 0;
 

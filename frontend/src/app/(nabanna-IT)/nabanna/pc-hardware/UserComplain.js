@@ -6,7 +6,7 @@ import "../../FixedHeaderTable.css";
 import { Table } from "react-bootstrap";
 import NoWorkImg from "../Task-Image/no-work-today-troll-dance (1).gif";
 import pageLoading from "../Task-Image/cargando-loading.gif";
-import EditComplainBtn from "../../component/Button/EditComplainBtn";
+import { EditComplainBtn } from "../../component/Button/ComplainBtn";
 import EditRepairBtn from "../../component/Button/EditRepairBtn";
 import { SearchSystem } from "../../component/Button/NabannaSystemBtn";
 import { handleAxiosError, ErrorDisplay } from "@/app/utils/axiosError";

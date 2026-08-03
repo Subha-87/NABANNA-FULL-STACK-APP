@@ -126,9 +126,9 @@ const searchEstimate = async (req, resp) => {
       query = { $or: orConditions }; // for all JE ,Net & Voice Personnel //
     }
 
-    const result = await estimateCollection.find(query).sort({ _id: -1 });
+    const result = await estimateCollection.find(query).sort({ _id: -1 }); // finding single or multiple document
     //console.log(result);
-    if (!result) return sendError(resp, 404, "No Estimate Found");
+    if (result.length == 0) return sendError(resp, 404, "No Estimate Found");
     return sendSuccess(resp, 200, "Estimate Found", result);
   } catch (error) {
     return sendError(resp, 500, "Internal Server Error");
@@ -178,7 +178,7 @@ const uploadChallan = async (req, resp) => {
 
 // View Button -> Challan & Order //
 const showChallanwithOrder = async (req, resp) => {
-  console.log("requesting...")
+  console.log("requesting...");
   const { reqId } = req.params;
   //console.log({view_key:reqId})
   try {

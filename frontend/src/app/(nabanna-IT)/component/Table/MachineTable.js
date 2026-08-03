@@ -1,10 +1,9 @@
 import { Table } from "react-bootstrap";
-import "../../TableStyle.css"
+import "../../TableStyle.css";
 import {
   WarrantyColor,
   HardwareCell,
   systemConditionColor,
-  getEffectiveAmcStatus,
 } from "./Resuable/portableFunction";
 import { EditSystem, DeleteSystemBtn } from "../Button/NabannaSystemBtn";
 
@@ -29,6 +28,7 @@ const MachineTable = ({ showdata, refreshData }) => {
           <th className="th">Floor</th>
           <th className="th">Room</th>
           <th className="th">Office</th>
+          <th className="th">All-In-One</th>
           <th className="th">CPU</th>
           <th className="th">Monitor</th>
           <th className="th">Printer</th>
@@ -36,9 +36,7 @@ const MachineTable = ({ showdata, refreshData }) => {
           <th className="th">Scanner</th>
           <th className="th">Laptop</th>
           <th className="th">Supplier</th>
-          <th className="th">Installed</th>
-          <th className="th">Remaining Warranty</th>
-          <th className="th">AMC Status</th>
+
           <th className="th">Condition</th>
           <th className="th">Remarks</th>
           <th className="th">Action</th>
@@ -48,7 +46,7 @@ const MachineTable = ({ showdata, refreshData }) => {
       <tbody>
         {showdata.map((row, index) => {
           //const warranty = WarrantyColor(row.remainingWarranty);
-          const amcStatus = getEffectiveAmcStatus(row);
+          //const amcStatus = getEffectiveAmcStatus(row);
           const CONDITION_EMOJI = {
             GOOD: "😄", // happy
             AVERAGE: "😐", // neutral
@@ -71,11 +69,17 @@ const MachineTable = ({ showdata, refreshData }) => {
               <td className="td">{row.office || "NA"}</td>
 
               <td className="td">
+                <HardwareCell device={row.systems?.ALL_IN_ONE} />
+              </td>
+
+              <td className="td">
                 <HardwareCell device={row.systems?.CPU} />
               </td>
+
               <td className="td">
                 <HardwareCell device={row.systems?.MONITOR} />
               </td>
+
               <td className="td">
                 <HardwareCell device={row.systems?.PRINTER} />
               </td>
@@ -83,43 +87,16 @@ const MachineTable = ({ showdata, refreshData }) => {
               <td className="td">
                 <HardwareCell device={row.systems?.UPS} />
               </td>
+
               <td className="td">
                 <HardwareCell device={row.systems?.SCANNER} />
               </td>
+
               <td className="td">
                 <HardwareCell device={row.systems?.LAPTOP} />
               </td>
               <td className="td">{row.supplier}</td>
-              <td className="td">
-                {row.installationDate
-                  ? new Date(row.installationDate).toLocaleDateString()
-                  : "-"}
-              </td>
 
-              <td
-                className={
-                  row.remainingWarranty === "Expired"
-                    ? "!text-red-600"
-                    : "!text-green-600"
-                }
-              >
-                {row.remainingWarranty}
-              </td>
-              <td
-                className={
-                  amcStatus === "REQUIRED"
-                    ? "!text-red-600 font-semibold"
-                    : amcStatus === "ON"
-                      ? "!text-green-600 font-semibold"
-                      : "!text-blue-600 font-semibold"
-                }
-              >
-                {amcStatus === "NONE"
-                  ? "NA"
-                  : amcStatus === "REQUIRED"
-                    ? "Required AMC"
-                    : "AMC ON"}
-              </td>
               <td className="td">
                 <div
                   className={`flex flex-col items-center justify-center h-full w-full font-semibold ${

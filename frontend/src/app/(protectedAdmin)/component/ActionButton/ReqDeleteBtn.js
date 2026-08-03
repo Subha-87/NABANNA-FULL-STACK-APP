@@ -24,7 +24,8 @@ const ReqDeleteBtn = ({ selectedId, onRefresh }) => {
             icon: "success",
           });
         });
-        onRefresh().catch((error) => {
+        onRefresh()
+        .catch((error) => {
           toast.error(error.response.data.message || "Something Went Wrong");
         });
       }

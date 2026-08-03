@@ -1,4 +1,10 @@
-const { itContent, normalWebContent,itContentModify } = require("./promptContent");
+const {
+  itContent,
+  normalWebContent,
+  itContentModify,
+} = require("./promptContent");
+
+const { basePersona, toolPolicy, ragInstruction } = require("./promptGroup");
 
 const simpleBuildMessage = (userQuery) => {
   return [
@@ -29,9 +35,36 @@ const webBuildMessage = (userQuery) => {
   ];
 };
 
+// Modified Prompt Message for LLM //
 
+const LLMinputMsg = async ({ userQuery, memory = [], ragContext = "" }) => {
+  console.log(userQuery);
+  console.log(ragContext);
+  const ragPrompt = await ragInstruction(ragContext); // main rag answer thing //
+
+  return [
+    {
+      role: "system",
+      content: `
+${basePersona}
+
+${toolPolicy}
+
+${ragPrompt}
+`,
+    },
+
+    ...memory,
+
+    {
+      role: "user",
+      content: userQuery,
+    },
+  ];
+};
 
 module.exports = {
   simpleBuildMessage,
   webBuildMessage,
+  LLMinputMsg,
 };

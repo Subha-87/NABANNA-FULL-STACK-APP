@@ -2,12 +2,12 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export const pdfPrint = (fetchData) => {
-  //console.log("for pdf print:", fetchData);
   const taskPdf = new jsPDF({
     orientation: "portrait",
     unit: "mm",
     format: "a4",
   });
+
   const tableColumn = [
     "Serial",
     "Date",
@@ -18,6 +18,7 @@ export const pdfPrint = (fetchData) => {
     "Problems",
     "Activity",
   ];
+
   const tableRows = fetchData.map((row, index) => [
     index + 1,
     new Date(row.date).toLocaleDateString(),
@@ -25,103 +26,163 @@ export const pdfPrint = (fetchData) => {
     row.designation,
     row.department,
     row.room,
-    row.complain ? row.type + ":" + row.complain : row.type, // add row.type also
-    row.remarks.split(":")[1].trim(),
+    row.complain ? row.type + ":" + row.complain : row.type,
+    row.remarks?.split(":")[1]?.trim() || "",
   ]);
 
-  // Headline //
-  const getOneDate = fetchData.map((data) => data.date)[0];
-  const taskDomain = fetchData.map((d) => d.domain)[0];
+  // ---------------- TITLE ----------------
+
+  const getOneDate = fetchData?.[0]?.date;
+  const taskDomain = fetchData?.[0]?.domain;
+
   const domin =
-    taskDomain == "Internet"
+    taskDomain === "Internet"
       ? "Network"
-      : taskDomain == "PC_Hardware"
-        ? "System"
-        : taskDomain;
-  const title = `IT-${domin.toUpperCase()} MAINTENANCE DATA REPORT`;
-  const title2 = `Month Of ${new Date(getOneDate).toLocaleString("default", {
-    month: "long",
-  })} ${new Date(getOneDate).getFullYear()}`;
+      : taskDomain === "PC_Hardware"
+      ? "System"
+      : taskDomain;
 
-  // Page dimensions
-  const pageWidth = taskPdf.internal.pageSize.getWidth(); //Calculate page dimensions using pageSize.getWidth()/getHeight()
+  const title = `IT-${domin?.toUpperCase()} MAINTENANCE DATA REPORT`;
+
+  const title2 = `Month Of ${new Date(getOneDate).toLocaleString(
+    "default",
+    {
+      month: "long",
+    }
+  )} ${new Date(getOneDate).getFullYear()}`;
+
+  // ---------------- PAGE CONFIG ----------------
+
+  const pageWidth = taskPdf.internal.pageSize.getWidth();
   const pageHeight = taskPdf.internal.pageSize.getHeight();
-  const margin = 10; //General page margin (used on all sides)
-  const headerHeight = 15; //Space reserved at top of page
-  const footerHeight = 10; //Space reserved at bottom of page
 
-  // Add title above table (on first page)
-  taskPdf.setFontSize(18);
-  taskPdf.text(title, pageWidth / 2, margin, { align: "center" });
-  taskPdf.setFontSize(14);
-  taskPdf.text(title2, pageWidth / 2, margin + 6, { align: "center" });
+  const margin = 10;
+
+  // Reserve fixed spaces
+  const headerSpace = 30;
+  const footerSpace = 30;
+
+  // ---------------- TABLE ----------------
 
   autoTable(taskPdf, {
     theme: "grid",
-    //margin: { top: 40, left: 10, bottom: 30, right: 10 },
+
     head: [tableColumn],
     body: tableRows,
-    startY: margin + headerHeight, // Position below header where table starts
-    margin: { top: margin + headerHeight }, // Ensures table respects header space
+
+    // VERY IMPORTANT
+    startY: headerSpace,
+
+    margin: {
+      top: headerSpace,
+      bottom: footerSpace,
+      left: margin,
+      right: margin,
+    },
+
     styles: {
-      fontSize: 10,
+      fontSize: 9,
       halign: "center",
       valign: "middle",
       font: "times",
+      overflow: "linebreak",
+      cellPadding: 2,
     },
+
+    headStyles: {
+      fillColor: [220, 220, 220],
+      textColor: 0,
+      fontStyle: "bold",
+    },
+
+    bodyStyles: {
+      textColor: 20,
+    },
+
     didDrawPage: function (data) {
-      // Current page number (1-indexed)
-      const pageNumber = data.pageNumber; //Current page index (1-based)
+      const pageNumber = taskPdf.getCurrentPageInfo().pageNumber;
       const totalPages = taskPdf.internal.getNumberOfPages();
 
-      // HEADER - Draw on every page
-      taskPdf.setFontSize(12);
-      taskPdf.setFont(undefined, "bold");
-      taskPdf.text("PWD-IT", margin, margin);
-      taskPdf.setFontSize(10);
-      taskPdf.text("Site:Nabanna", margin, margin + 5);
+      // ================= HEADER =================
 
-      // Draw line under header
-      taskPdf.setLineWidth(0.2);
-      taskPdf.line(margin, margin + 10, pageWidth - margin, margin + 10);
+      // Main title
+      taskPdf.setFontSize(16);
+      taskPdf.setFont("times", "bold");
 
-      // FOOTER - Draw on every page
-      //const footerY = pageHeight - margin;
-      const footerY = pageHeight - footerHeight;
-      taskPdf.setFontSize(12);
-      taskPdf.setFont(undefined, "normal");
-
-      // Left-aligned text above Footer Line
-      taskPdf.text("Service Engineer Signature", margin, footerY - 20, {
-        align: "left",
+      taskPdf.text(title, pageWidth / 2, 12, {
+        align: "center",
       });
 
-      // Right-aligned text above Footer Line
-      taskPdf.text("PWD Signature", pageWidth - margin, footerY - 20, {
-        align: "right",
+      // Subtitle
+      taskPdf.setFontSize(12);
+
+      taskPdf.text(title2, pageWidth / 2, 19, {
+        align: "center",
       });
 
+      // Left info
       taskPdf.setFontSize(10);
+
+      taskPdf.text("PWD-IT", margin, 12);
+
+      taskPdf.text("Site: Nabanna", margin, 18);
+
+      // Header line
+      taskPdf.setLineWidth(0.3);
+
+      taskPdf.line(
+        margin,
+        headerSpace - 5,
+        pageWidth - margin,
+        headerSpace - 5
+      );
+
+      // ================= FOOTER =================
+
+      const footerY = pageHeight - 15;
+
+      // Signature labels
+      taskPdf.setFontSize(10);
+
+      taskPdf.text(
+        "Service Engineer Signature",
+        margin,
+        footerY - 10
+      );
+
+      taskPdf.text(
+        "PWD Signature",
+        pageWidth - margin,
+        footerY - 10,
+        {
+          align: "right",
+        }
+      );
 
       // Footer line
-      taskPdf.setLineWidth(0.2);
-      taskPdf.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
+      taskPdf.line(
+        margin,
+        footerY - 5,
+        pageWidth - margin,
+        footerY - 5
+      );
 
-      // Left-aligned text under Footer Line
+      // Footer texts
+      taskPdf.setFontSize(9);
+
       taskPdf.text(
         `Generated: ${new Date().toLocaleDateString()}`,
         margin,
-        footerY,
+        footerY
       );
 
-      // Right-aligned text under Footer Line
       taskPdf.text(
         `Page ${pageNumber} of ${totalPages}`,
         pageWidth - margin,
         footerY,
         {
           align: "right",
-        },
+        }
       );
     },
   });

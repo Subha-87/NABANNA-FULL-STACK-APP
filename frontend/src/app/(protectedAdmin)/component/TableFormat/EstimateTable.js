@@ -1,7 +1,7 @@
 import { Table, Contaniner, Row, Col } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import Image from "next/image";
-import "./TableStyle.css"
+import "./TableStyle.css";
 import {
   EditNabannaEstimate,
   ViewChallan,
@@ -16,30 +16,12 @@ import { toast } from "react-toastify";
 import UploadIcon from "@mui/icons-material/Upload";
 import { useAxios } from "@/app/Hook/useAxios";
 import { handleAxiosError, ErrorDisplay } from "@/app/utils/axiosError";
+import { useEstimate } from "../Providers/EstimateProviders";
 
 export const NabannaEstimateTable = () => {
-  const [estData, setEstData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [file, setFile] = useState(null);
   const axios = useAxios();
-
-  // Get ALL Estimate Record //
-  const getEstimateRecords = async () => {
-    try {
-      const resp = await axios.get("/estimateReg");
-      setEstData(resp.data?.data);
-    } catch (error) {
-      const { generalError } = handleAxiosError(error);
-      setError(generalError);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getEstimateRecords();
-  }, []);
+  const { estData, loading, error, getEstimateRecords } = useEstimate();
 
   const openInNewTab = (url) => {
     window.open(url, "_blank", "noreferrer");
@@ -59,7 +41,7 @@ export const NabannaEstimateTable = () => {
         formData,
       );
       //console.log(response);
-      getEstimateRecords()
+      getEstimateRecords(); //refresh Table //
       toast.success(response.data.message || "Upload Successful");
     } catch (error) {
       //console.error(error);
@@ -69,7 +51,7 @@ export const NabannaEstimateTable = () => {
 
   return (
     <>
-      {isLoading ? (
+      {loading ? (
         <div className=" flex flex-column text-center ">
           <div className="flex justify-content-center">
             <Image
@@ -200,7 +182,10 @@ export const NabannaEstimateTable = () => {
                 <td>{data.remarks}</td>
                 <td>
                   <div className="flex justify-content-center hover:cursor-pointer ">
-                    <EditNabannaEstimate rowData={data} onRefresh={getEstimateRecords} />
+                    <EditNabannaEstimate
+                      rowData={data}
+                      onRefresh={getEstimateRecords}
+                    />
                     <ViewChallan rowId={data._id} />
                   </div>
                 </td>

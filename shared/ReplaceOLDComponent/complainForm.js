@@ -143,7 +143,7 @@ const ComplainForm = ({ modStat, onSuccess }) => {
         message = whatsappResult.value.data.message;
       }*/
       //let message = dbResponse?.message || "Complain submitted successfully";
-      toast.success(message || "Complain submitted successfully");
+      toast.success(message || "Complain Submitted successfully");
       // Send Complain to IT Personnel based on domain : IT||Voice||Cable-TV||PC //
       /*SweetSwal.fire({
         position: "top-end",

@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useAxios } from "@/app/Hook/useAxios";
 import "../../TableStyle.css"
 import { Table } from "react-bootstrap";
-import EditComplainBtn from "../../component/Button/EditComplainBtn";
+import { EditComplainBtn,AddComplainBtn } from "../../component/Button/ComplainBtn";
+
 import Image from "next/image";
 import NoWorkImg from "../Task-Image/no-work-today-troll-dance (1).gif";
 import pageLoading from "../Task-Image/cargando-loading.gif";
@@ -20,7 +21,7 @@ const Complain = ({setData}) => {
     try {
       const response = await axios.get(`/complain/getComplainIT/${setDomain}`);
       //console.log(response);
-      setData(response.data?.data) // send data to cound notification
+      setData(response.data?.data) // send data to count notification
       setComplainData(response.data?.data);
       //setData(complainData)
       //setLoading(false)
@@ -42,6 +43,9 @@ const Complain = ({setData}) => {
 
   return (
     <>
+     <div className="flex justify-content-evenly items-center h-[60px]">
+       <AddComplainBtn onVoiceSuccess={getVoiceComplainData}/>
+      </div>
       {loading ? (
         <div className="flex flex-column text-center  text-2xl font-bold">
           <div className="flex justify-content-center">
@@ -106,7 +110,7 @@ const Complain = ({setData}) => {
                 <td className="w-[200px]">{data.remarks}</td>
                 <td className="w-[35px]">
                   <div className="flex justify-content-center hover:cursor-pointer mb-2">
-                    <EditComplainBtn editData={data} />
+                    <EditComplainBtn editData={data} onRefresh={getVoiceComplainData} />
                   </div>
                 </td>
               </tr>

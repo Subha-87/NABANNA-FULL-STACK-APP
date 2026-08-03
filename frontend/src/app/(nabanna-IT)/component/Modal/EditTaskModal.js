@@ -2,10 +2,11 @@ import { Modal, Box, Typography,Backdrop,IconButton} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import { modalStyle } from "./styleModal";
-//import TaskManage from "../../../../../../shared/ReplaceOLDComponent/TaskManage";
 import TaskManage from "../FormikForm/TaskManage";
+import TaskManageVoice from "../FormikForm/TaskManageVoice";
 
-const EditModal = ({ isModalOpen, isModalClose, editData, onRefresh }) => {
+
+ export const EditModal = ({ isModalOpen, isModalClose, editData, onRefresh }) => {
   //console.log(editData);
   const handleModal = (value) => {
     // value = true trigger in formik page when click submit button , value must be true for close the model
@@ -87,4 +88,16 @@ const EditModal = ({ isModalOpen, isModalClose, editData, onRefresh }) => {
   );
 };
 
-export default EditModal;
+export const EditModalVoice = ({ isModalOpen, isModalClose, editData, onRefresh }) => {
+  //console.log(editData)
+  const handleModal = (value) => {
+    isModalClose(value)
+  }
+  return (
+    <Modal open={isModalOpen} onClose={isModalClose}>
+      <Box sx={modalStyle}>
+        <TaskManageVoice editableVoiceInfo={editData} modStat = {handleModal} onRefresh={onRefresh}/>
+      </Box>
+    </Modal>
+  );
+};

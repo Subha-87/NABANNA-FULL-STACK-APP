@@ -2,7 +2,8 @@ import Image from "next/image";
 //import login from "../../../../public/login.jpg";
 //import coverImg from "../../../../public/LoginImage/abstract_low_poly_techno_design_background_1905.jpg";
 import coverImg from "../../../../public/LoginImage/Cross-platform development in action.png"
-import BiswaBangla from "../../../../public/LoginImage/Emblem_of_West_Bengal_(2018-present).svg.png";
+
+import AshokStamva from "../../../../public/LogoImage/ChatGPT Image May 12, 2026, 05_06_07 PM.png"
 import { Suspense } from "react";
 import AdminLogin from "./AdminLogin";
 import loginStyle from "./page.module.css";
@@ -21,10 +22,11 @@ export default async function Page() {
           {/* Logo */}
           <div className={loginStyle.loginLogo}>
             <Image
-              src={BiswaBangla}
-              alt="Biswa Bangla Logo"
-              height={90}
+              src={AshokStamva}
+              alt="Govt Logo"
+              height={100}
               width={90}
+              style={{marginBottom:-35}}
             />
           </div>
 

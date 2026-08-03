@@ -1,6 +1,8 @@
 const { groq, tvly, LLMnodeCache } = require("../config/aiClient");
-const { webBuildMessage } = require("../utils/promptBuilder");
+const { webBuildMessage, LLMinputMsg } = require("../utils/promptBuilder");
 const { itContent } = require("../utils/promptContent");
+const {runAgentLoop,agentLoop} = require("./loopService")
+const{retrieveContext} = require("./vectorPineconeService")
 
 // Web Search Tool Calling //
 async function webSearch({ query }) {
@@ -17,7 +19,7 @@ async function webSearch({ query }) {
     const finalSearchResult = tvlyResp.results
       .map((result) => result.content)
       .join("\n\n"); // making string with space and new line //
-    //console.log("WebToolAnswer:", finalSearchResult);
+    console.log("WebToolAnswer:", finalSearchResult);
 
     return {
       success: true,
@@ -303,64 +305,75 @@ const getChatRespMemory = async (userMessage, sessionId) => {
   }
 };
 
-const runAgentLoop = async (RintuMsg, tools, toolRegistry, threadId) => {
-  const MAX_ITERATION = 10;
-  let iteration = 0;
+// Implemented RAG Based Chat Response //
+const getChatRespRag = async (userMessage, sessionId) => {
+  try {
+    const tools = [
+      {
+        type: "function",
+        function: {
+          name: "webSearch",
+          description:
+            "Search the latest information and realtime data on the internet",
+          parameters: {
+            // JSON Schema object
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "The Search query to perform search on",
+              },
+            },
+            required: ["query"],
+          },
+        },
+      },
+    ];
+    const toolRegistry = {
+      // every possible tool functions will be mention here//
+      webSearch,
+    };
+    // 1. Load Memory
+    const memory = LLMnodeCache.get(sessionId) ?? [];
+    // 2. Get Rag Context
+    const ragContext = await retrieveContext(userMessage); //1) send user query --> vector pinecone search //
 
-  while (iteration < MAX_ITERATION) {
-    iteration++;
-
-    const response = await groq.chat.completions.create({
-      tools,
-      tool_choice: "auto",
-      messages: RintuMsg,
-      model: "llama-3.3-70b-versatile",
-      temperature: 0,
+    //3.Build fresh prompt
+    const message = LLMinputMsg({
+      userQuery: userMessage,
+      ragContext,
+      memory,
+    });
+    //4.Run Agent//
+    const result = await agentLoop(message, tools, toolRegistry);
+    //saveclean memory only //
+    memory.push({
+      role: "user",
+      content: userMessage,
+    });
+    memory.push({
+      role: "assistant",
+      content: result,
     });
 
-    const message = response.choices[0].message; // LLM Generate -> response.choces[0].message.content || response.choces[0].message.tool_calls //
-
-    RintuMsg.push(message);
-
-    const toolCalls = message.tool_calls;
-
-    if (!toolCalls) {
-      // While Loop Break Here //
-      // Here we end the chatbot response //
-
-      LLMnodeCache.set(threadId, RintuMsg); // set the user message in cache memory
-      //console.log({ cacheData: LLMnodeCache }); // check what to store //
-      //console.log(JSON.stringify(LLMnodeCache.data))
-      return message.content || "Cant Reply";
-    }
-
-    for (const tool of toolCalls) {
-      let args;
-
-      try {
-        args = JSON.parse(tool.function.arguments);
-      } catch {
-        continue;
-      }
-
-      const toolFunction = toolRegistry[tool.function.name];
-      if (!toolFunction) continue;
-
-      const toolResult = await toolFunction(args);
-
-      RintuMsg.push({
-        role: "tool",
-        tool_call_id: tool.id,
-        content: toolResult.message,
-      });
-    }
+    LLMnodeCache.set(sessionId, memory);
+  } catch (error) {
+    console.error("LLM ERROR:", error);
+    //throw error;
+    return {
+      success: false,
+      message:
+        error?.error?.error?.message ||
+        "AI Service Unavailable,Something is Wrong//LLM Error",
+    };
   }
-
-  return "Agent stopped: too many tool calls";
 };
+
+
 
 module.exports = {
   getChatResponse,
   getChatSuperResponse,
   getChatRespMemory,
+  getChatRespRag
 };

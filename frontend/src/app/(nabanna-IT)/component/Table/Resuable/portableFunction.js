@@ -1,118 +1,103 @@
 export const HardwareCell = ({ device }) => {
   if (!device) return <span className="text-gray-400">-</span>;
 
+  const devices = Array.isArray(device) ? device : [device];
+
+  if (devices.length === 0) return <span className="text-gray-400">-</span>;
+
+  const getStatus = (d) => {
+    // Warranty still active
+    if (d.remainingWarranty !== "Expired") {
+      return {
+        text: `Warranty : ${d.remainingWarranty}`,
+        className: "text-green-600 font-semibold",
+      };
+    }
+
+    // Warranty expired
+    switch (d.amcStatus) {
+      case "ON":
+        return {
+          text: "AMC : Active",
+          className: "text-green-600 font-semibold",
+        };
+
+      case "EXPIRED":
+        return {
+          text: "AMC : Expired",
+          className: "text-red-600 font-semibold",
+        };
+
+      case "REQUIRED":
+      case "NONE":
+      default:
+        return {
+          text: "Warranty : Expired",
+          secondLine: "AMC : Required",
+          className: "text-red-600 font-semibold",
+        };
+    }
+  };
+
   return (
-    <div className="text-xs leading-4">
-      <div>
-        <b>Make:</b> {device.make}
-      </div>
-      <div>
-        <b>Model:</b> {device.model}
-      </div>
-      <div>
-        <b>SN:</b> {device.serial}
-      </div>
+    <div className="space-y-2 text-xs">
+      {devices.map((d, index) => {
+        const status = getStatus(d);
+
+        return (
+          <div key={index} className="rounded border bg-gray-50 p-2">
+            <div>
+              <b>Make:</b> {d.make}
+            </div>
+
+            <div>
+              <b>Model:</b> {d.model}
+            </div>
+
+            <div>
+              <b>SN:</b>{" "}
+              {Array.isArray(d.serial) ? d.serial.join(", ") : d.serial}
+            </div>
+
+            {d.installationDate ? (
+              <div>
+                {" "}
+                <b>Installed:</b>{" "}
+                {new Date(d.installationDate).toLocaleDateString("en-GB")}
+              </div>
+            ) : null}
+
+            <div className={status.className}>{status.text}</div>
+
+            {status.secondLine && (
+              <div className="font-semibold text-orange-600">
+                {status.secondLine}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };
 
-export const WarrantyColor = (remainingWarranty) => {
-  if (!remainingWarranty || remainingWarranty === "-") return "inherit";
+export const WarrantyColor = (device) => {
+  if (!device) return "text-gray-500";
 
-  if (remainingWarranty === "Expired")
-    return {
-      text: "Required AMC",
-      color: "red",
-    };
-
-  // extract years & months
-  const match = remainingWarranty.match(/(\d+)y\s*(\d+)m/);
-  if (!match) {
-    return { text: remainingWarranty, color: "inherit" };
+  if (device.remainingWarranty !== "Expired") {
+    return "text-green-600";
   }
 
-  const years = Number(match[1]);
-  const months = Number(match[2]);
-
-  const totalMonths = years * 12 + months;
-
-  if (totalMonths <= 6) {
-    // 🟡 < 6 months
-    return {
-      text: remainingWarranty,
-      color: "orange",
-    };
-  }
-  // 🟢 Normal
-  return {
-    text: remainingWarranty,
-    color: "green",
-  };
-};
-
-export const systemConditionColor = (condition) => {
-  switch (condition) {
-    case "GOOD":
+  switch (device.amcStatus) {
+    case "ON":
       return "text-green-600";
-    case "AVERAGE":
-      return "text-yellow-500";
-    case "BAD":
+
+    case "EXPIRED":
       return "text-red-600";
+
+    case "REQUIRED":
+    case "NONE":
     default:
-      return "";
+      return "text-orange-600";
   }
-};
-
-export const getEffectiveAmcStatus = (row) => {
-  if (row.remainingWarranty === "Expired" && row.amcStatus === "NONE") {
-    return "REQUIRED";
-  }
-  return row.amcStatus;
-};
-
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
-
-export const exportToExcel = (rows) => {
-  const excelData = rows.map((row, index) => ({
-    "Sl No": index + 1,
-    Department: row.department,
-    Floor: row.floor,
-    Room: row.roomNo,
-    Employee: row.employeeName,
-    Designation: row.designation,
-    CPU: row.systems?.CPU
-      ? `${row.systems.CPU.model} (${row.systems.CPU.serial})`
-      : "",
-    Monitor: row.systems?.MONITOR
-      ? `${row.systems.MONITOR.model} (${row.systems.MONITOR.serial})`
-      : "",
-    Printer: row.systems?.PRINTER
-      ? `${row.systems.PRINTER.model} (${row.systems.PRINTER.serial})`
-      : "",
-    UPS: row.systems?.UPS
-      ? `${row.systems.UPS.model} (${row.systems.UPS.serial})`
-      : "",
-    Scanner: row.systems?.SCANNER
-      ? `${row.systems.UPS.model} (${row.systems.UPS.serial})`
-      : "",
-    Laptop: row.systems?.LAPTOP
-      ? `${row.systems.UPS.model} (${row.systems.UPS.serial})`
-      : "",
-  }));
-
-  const worksheet = XLSX.utils.json_to_sheet(excelData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Hardware");
-
-  const excelBuffer = XLSX.write(workbook, {
-    bookType: "xlsx",
-    type: "array",
-  });
-
-  const file = new Blob([excelBuffer], {
-    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  });
-
-  saveAs(file, "Employee_Hardware_Report.xlsx");
 };

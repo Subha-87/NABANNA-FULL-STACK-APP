@@ -10,7 +10,7 @@ import {
   CircularProgress,
   Grid,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAxios } from "@/app/Hook/useAxios";
 import { handleAxiosError } from "@/app/utils/axiosError";
 import { SweetSwal } from "@/component/ConstValues/sweetAlert";
@@ -30,6 +30,7 @@ import NotesIcon from "@mui/icons-material/Notes";
 
 const MaterialForm = ({ modStat, onSuccess }) => {
   const axios = useAxios();
+  const scrollContainerRef = useRef(null);
 
   const formInitialValues = {
     date: "",
@@ -65,6 +66,26 @@ const MaterialForm = ({ modStat, onSuccess }) => {
     return null;
   };
 
+  // Component to handle auto-scroll
+  const AutoScrollItems = () => {
+    const { values } = useFormikContext();
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTo({
+            top: scrollContainerRef.current.scrollHeight,
+            behavior: "smooth",
+          });
+        }
+      }, 50); // Small delay to ensure DOM renders the new row
+
+      return () => clearTimeout(timer);
+    }, [values.itItems.length]);
+
+    return null;
+  };
+
   const validation = Yup.object().shape({
     date: Yup.date().required("Date is required!"),
     sender: Yup.string().required("Select Sender!"),
@@ -97,7 +118,6 @@ const MaterialForm = ({ modStat, onSuccess }) => {
     }
   };
 
-  // Standardized Input Styling for Indigo Theme
   const inputSx = (hasError) => ({
     "& .MuiOutlinedInput-root": {
       borderRadius: "10px",
@@ -124,7 +144,6 @@ const MaterialForm = ({ modStat, onSuccess }) => {
     },
   });
 
-  // Compact styling for inline array fields (using placeholders to save space)
   const miniInputSx = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "8px",
@@ -155,20 +174,20 @@ const MaterialForm = ({ modStat, onSuccess }) => {
           sx={{
             display: "flex",
             flexDirection: "column",
-            maxHeight: "90vh",
-            overflow: "hidden",
+            height: "100%", // Fills the Modal's height
+            overflow: "hidden", // Prevents form from overflowing the modal
           }}
         >
           {/* --- FIXED HEADER --- */}
           <Box
             sx={{
+              flexShrink: 0, // Prevents header from shrinking
               background:
                 "linear-gradient(135deg, #312e81 0%, #4338ca 50%, #6366f1 100%)",
               padding: "22px 28px",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              flexShrink: 0,
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -219,13 +238,15 @@ const MaterialForm = ({ modStat, onSuccess }) => {
           </Box>
 
           {/* --- SCROLLABLE CONTENT --- */}
+          {/* This box takes all remaining space and handles scrolling */}
           <Box
+            ref={scrollContainerRef}
             sx={{
-              flex: "1 1 0%",
-              minHeight: 0,
-              overflowY: "auto",
+              flex: "1 1 auto", // Grows to fill space
+              //minHeight: 0, // Critical fix for scrolling inside flex container
+              maxHeight:500,
+              overflowY: "auto", // Enables scrolling here
               padding: "28px",
-              display: "block",
               boxSizing: "border-box",
               "&::-webkit-scrollbar": { width: "6px" },
               "&::-webkit-scrollbar-thumb": {
@@ -235,6 +256,7 @@ const MaterialForm = ({ modStat, onSuccess }) => {
             }}
           >
             <CustomSelect />
+            <AutoScrollItems />
 
             {/* Top Info Grid */}
             <Grid container spacing={2.5} sx={{ mb: 3 }}>
@@ -281,7 +303,7 @@ const MaterialForm = ({ modStat, onSuccess }) => {
                   sx={{
                     width: "200px",
                     ...inputSx(touched.sender && errors.sender),
-                  }} // Strict 150px width
+                  }}
                 >
                   {itemSenders.map((vendor) => (
                     <MenuItem key={vendor} value={vendor.toLowerCase()}>
@@ -291,7 +313,6 @@ const MaterialForm = ({ modStat, onSuccess }) => {
                 </TextField>
               </Grid>
 
-              {/* CONDITIONAL "OTHERS" FIELD APPEARS HERE, RIGHT NEXT TO SENDER */}
               {values.sender === "others" && (
                 <Grid item xs={12} sm={4}>
                   <SectionLabel
@@ -311,7 +332,6 @@ const MaterialForm = ({ modStat, onSuccess }) => {
                 </Grid>
               )}
 
-              {/* CHALLAN DYNAMICALLY TAKES REMAINING SPACE (8 IF OTHERS IS HIDDEN, 4 IF VISIBLE) */}
               <Grid item xs={12} sm>
                 <SectionLabel
                   icon={<ReceiptLongIcon sx={{ fontSize: 16 }} />}
@@ -335,7 +355,7 @@ const MaterialForm = ({ modStat, onSuccess }) => {
               </Grid>
             </Grid>
 
-            {/* Dynamic Items Section - SINGLE ROW LAYOUT */}
+            {/* Dynamic Items Section */}
             <Box sx={{ mb: 3 }}>
               <Box
                 sx={{
@@ -372,14 +392,14 @@ const MaterialForm = ({ modStat, onSuccess }) => {
               <FieldArray name="itItems">
                 {({ remove }) => (
                   <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    sx={{ display: "flex", flexDirection: "column", gap: 2,maxHeight:300,overflow:"auto" }}
                   >
                     {values.itItems.map((item, index) => (
                       <Box
                         key={index}
                         sx={{
                           display: "flex",
-                          alignItems: "center", // Vertically aligns all inputs perfectly
+                          alignItems: "center",
                           gap: 1.5,
                           p: 2,
                           border: "1px solid #e2e8f0",
@@ -440,8 +460,8 @@ const MaterialForm = ({ modStat, onSuccess }) => {
                               placeholder="Qty"
                               sx={{
                                 ...miniInputSx,
-                                width: "70px", // Fixed small width for quantity
-                                flex: "none", // Prevents flexbox from stretching it
+                                width: "70px",
+                                flex: "none",
                               }}
                             />
                           )}
@@ -465,7 +485,7 @@ const MaterialForm = ({ modStat, onSuccess }) => {
                               color: "#ef4444",
                               backgroundColor: "#fef2f2",
                               "&:hover": { backgroundColor: "#fee2e2" },
-                              flex: "none", // Keeps delete button from shrinking
+                              flex: "none",
                             }}
                           >
                             <DeleteOutlineIcon fontSize="small" />
@@ -595,6 +615,7 @@ const MaterialForm = ({ modStat, onSuccess }) => {
           {/* --- FIXED FOOTER --- */}
           <Box
             sx={{
+              flexShrink: 0, // Prevents footer from shrinking or scrolling away
               display: "flex",
               justifyContent: "flex-end",
               gap: 2,
@@ -602,10 +623,6 @@ const MaterialForm = ({ modStat, onSuccess }) => {
               py: "16px",
               borderTop: "1px solid #f1f5f9",
               backgroundColor: "#fff",
-              flexShrink: 0,
-              position: "sticky",
-              bottom: 0,
-              zIndex: 10,
             }}
           >
             <Button
@@ -675,7 +692,6 @@ const MaterialForm = ({ modStat, onSuccess }) => {
   );
 };
 
-// --- HELPER COMPONENTS ---
 const SectionLabel = ({ icon, text, required }) => (
   <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
     <Box

@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { handleAxiosError } from "@/app/utils/axiosError";
 
 const TaskReAssign = ({ rowTask, modStat, onRefresh }) => {
+  console.log(rowTask)
   const axios = useAxios();
   const { authName } = useAuth();
 
@@ -30,7 +31,7 @@ const TaskReAssign = ({ rowTask, modStat, onRefresh }) => {
   const itPersonnel = [
     "Joydeep Ghosh", "Suman Sarder", "Swagatam Dutta", "Shirshendu Mukherjee",
     "Partha Nag Choudhury", "Rittick Kumar Dey", "Debashis Halder", "Rajdeep Saha",
-    "Baladeb Mukherjee", "Biplab Majumder",
+     "Biplab Majumder",
   ];
 
   const updatedData = { itTask: "", it_personnel: "", assignDate: "" };
@@ -42,9 +43,12 @@ const TaskReAssign = ({ rowTask, modStat, onRefresh }) => {
     assignDate: Yup.date().required("Date is required"),
   });
 
+  const selectRowId = rowTask._id
+
   const TASK_API_MAP = {
     Internet: "/TaskData/netTask",
     Voice: "/voiceTask/reAssign",
+   "Cable TV":"/NabannaTV/updateTask"
   };
 
   const handleReTask = async (values, { resetForm, setSubmitting }) => {
@@ -64,6 +68,7 @@ const TaskReAssign = ({ rowTask, modStat, onRefresh }) => {
       resetForm();
       modStat();
     } catch (error) {
+      console.error(error)
       const { generalError } = handleAxiosError(error);
       toast.error(generalError || "Something Went Wrong");
     } finally {

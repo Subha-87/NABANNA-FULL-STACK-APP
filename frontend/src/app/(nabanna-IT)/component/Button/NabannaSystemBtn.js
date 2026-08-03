@@ -10,6 +10,7 @@ import {
   EditMachineModal,
   StatusModal,
   RepairModal,
+  RenewModal,
 } from "../Modal/MachineModal";
 import { handleAxiosError } from "@/app/utils/axiosError";
 import { useAxios } from "@/app/Hook/useAxios";
@@ -217,8 +218,18 @@ export const SystemFind = () => {
   const [system, setSystem] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [serachResult, setSerachResult] = useState([]);
+  const [matchedValue, setMatchedValue] = useState("");
+  const [matchedDevice, setMatchedDevice] = useState("");
   const [error, setError] = useState(null);
-  const item = ["CPU", "MONITOR", "UPS", "LAPTOP", "PRINTER", "SCANNER"];
+  const item = [
+    "All_In_One",
+    "CPU",
+    "MONITOR",
+    "UPS",
+    "LAPTOP",
+    "PRINTER",
+    "SCANNER",
+  ];
   const handleSearch = async () => {
     setSerachResult([]);
     try {
@@ -232,15 +243,18 @@ export const SystemFind = () => {
       const success_msg = resp.data.message;
       toast.success(success_msg);
       const filter_result = resp.data?.data || [];
+      console.log(filter_result);
       setOpen(true);
       setSerachResult(filter_result);
+      setMatchedDevice(resp.data.matchedDevice);
+      setMatchedValue(resp.data.matchedValue);
       //alert(success_msg)
     } catch (error) {
       //console.error(error);
       const { generalError } = handleAxiosError(error);
-      setError(generalError)
+      setError(generalError);
       toast.error(generalError || "Something Went Wrong");
-      setOpen(false)
+      setOpen(false);
       //alert(err_msg)
       /*SweetSwal.fire({
         icon: "error",
@@ -250,6 +264,11 @@ export const SystemFind = () => {
     // After Finish Search Query Clear The Input Field //
     setSystem("");
     setSearchValue("");
+  };
+  const searchData = {
+    data: serachResult,
+    matchedDevice,
+    matchedValue,
   };
   return (
     <div className="flex justify-between h-[40px]">
@@ -296,9 +315,8 @@ export const SystemFind = () => {
       </Button>
       <MachineFilterModal
         isModalOpen={open}
-        isModalClose={() =>setOpen(false)}
-       
-        searchData={serachResult}
+        isModalClose={() => setOpen(false)}
+        searchData={searchData}
       />
     </div>
   );
@@ -453,5 +471,34 @@ export const DeleteSystemBtn = ({ del_id, refreshData }) => {
       style={{ color: "red", fontSize: "25px" }}
       onClick={handleRemoveSystem}
     />
+  );
+};
+
+export const RenewalAMCBtn = () => {
+  const [open, setOpen] = useState(false);
+  const [amcData, setAmcData] = useState(null);
+  const axios = useAxios();
+  const handleAMC = async () => {
+    try {
+      const resp = await axios.get("/nabannaSystem/renewal-detail");
+      //console.log(resp);
+      setAmcData(resp.data?.data);
+      setOpen(true);
+    } catch (error) {
+      //console.log(error);
+      toast.error("Somthing Went Wrong");
+    }
+  };
+  const activateAMC = () => {
+    alert("Renew Btn Clicked")
+    setOpen(false)// modal close
+  }
+  return (
+    <>
+      <Button variant="contained" color="primary" onClick={handleAMC}>
+        Renew AMC
+      </Button>
+      <RenewModal isModalOpen={open} isModalClose={() => setOpen(false)} renewData={amcData} handleRenew={activateAMC} />
+    </>
   );
 };

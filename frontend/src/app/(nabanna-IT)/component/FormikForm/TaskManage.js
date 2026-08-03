@@ -24,8 +24,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import PersonIcon from "@mui/icons-material/Person";
 import SaveIcon from "@mui/icons-material/Save";
 
-// ✅ FIX: Use styled() for higher CSS specificity
-const StyledForm = styled(Form)(({ theme }) => ({
+const StyledFormWrapper = styled(Box)(({ theme }) => ({
   width: "100%",
   maxWidth: "580px",
   margin: "0 auto",
@@ -36,64 +35,45 @@ const StyledForm = styled(Form)(({ theme }) => ({
 
 const StyledTextField = styled(TextField)({
   width: "100%",
-
   "& .MuiOutlinedInput-root": {
     borderRadius: "12px",
     backgroundColor: "#ffffff",
-
     "& fieldset": {
       borderColor: "#d1d5db",
       borderWidth: "2px",
     },
-
     "&:hover fieldset": {
       borderColor: "#667eea",
     },
-
     "&.Mui-focused fieldset": {
       borderColor: "#667eea",
       borderWidth: "2px",
     },
   },
-
   "& .MuiInputBase-input": {
     fontFamily: "Inter, sans-serif",
     padding: "12px",
   },
-
   "& .MuiFormHelperText-root": {
     fontSize: "12px",
     marginLeft: "4px",
   },
 });
 
+// ✅ UPDATED: Removed the static border color to allow dynamic colors via sx prop
 const StyledRadioGroup = styled(RadioGroup)(({ theme }) => ({
   display: "flex !important",
-  gap: "10px !important",
-  flexWrap: "wrap !important",
+  flexDirection: "row !important", // Ensure they stay in a row
+  gap: "12px !important",
   "& .MuiFormControlLabel-root": {
     backgroundColor: "#fff !important",
-    border: "1.5px solid #e5e7eb !important",
     borderRadius: "10px !important",
-    padding: "8px 16px !important",
+    padding: "10px 12px !important",
     marginRight: "0 !important",
     transition: "all 0.2s ease !important",
-    "&:hover": {
-      borderColor: "#667eea !important",
-      backgroundColor: "#f8f7ff !important",
-    },
-  },
-  "& .MuiRadio-root": {
-    padding: "4px !important",
-    "&.Mui-checked": {
-      color: "#667eea !important",
-    },
-  },
-  "& .MuiTypography-root": {
-    fontSize: "0.875rem !important",
-    fontWeight: "500 !important",
-    color: "#374151 !important",
-    fontFamily: "'Inter', sans-serif !important",
+    flex: 1, // Makes all 3 buttons take equal width in the same row
+    justifyContent: "center",
+    margin: "0 !important",
   },
 }));
 
@@ -122,16 +102,6 @@ const StyledButton = styled(Button)(({ theme }) => ({
     color: "#9ca3af !important",
     boxShadow: "none !important",
     transform: "none !important",
-  },
-}));
-
-const StyledFormWrapper = styled(Box)(({ theme }) => ({
-  width: "100%",
-  maxWidth: "580px",
-  margin: "0 auto",
-
-  "& input, & textarea, & select": {
-    fontFamily: "'Inter', sans-serif !important",
   },
 }));
 
@@ -165,6 +135,28 @@ const TaskManage = ({ editableInfo, modalStat, onRefresh }) => {
 
   const statusName = ["Pending", "In Progress", "Complete"];
 
+  // ✅ NEW: Color configuration map for statuses
+  const statusStyles = {
+    Pending: {
+      idleBorder: "#fca5a5",
+      activeBorder: "#ef4444",
+      activeBg: "#fef2f2",
+      radioColor: "#ef4444",
+    },
+    "In Progress": {
+      idleBorder: "#fde68a",
+      activeBorder: "#f59e0b",
+      activeBg: "#fffbeb",
+      radioColor: "#f59e0b",
+    },
+    Complete: {
+      idleBorder: "#86efac",
+      activeBorder: "#22c55e",
+      activeBg: "#f0fdf4",
+      radioColor: "#22c55e",
+    },
+  };
+
   const handleTaskSubmit = async (values, { resetForm, setSubmitting }) => {
     const { _id, username, remarks, status, it_personnel } = values;
     const setRemarks = authName.split(" ")[0] + ":" + " " + remarks;
@@ -193,9 +185,7 @@ const TaskManage = ({ editableInfo, modalStat, onRefresh }) => {
           })
         : null;
 
-      const promises = isVoice
-        ? [netApi, voiceApi, adminApi]
-        : [netApi, adminApi];
+      const promises = isVoice ? [netApi, voiceApi, adminApi] : [netApi, adminApi];
 
       const results = await Promise.allSettled(promises);
 
@@ -284,7 +274,7 @@ const TaskManage = ({ editableInfo, modalStat, onRefresh }) => {
             </Box>
           </Box>
 
-          {/* Work Status */}
+          {/* ✅ UPDATED: Work Status with Dynamic Row Colors */}
           <Box sx={{ marginBottom: "20px" }}>
             <Typography
               sx={{
@@ -303,15 +293,44 @@ const TaskManage = ({ editableInfo, modalStat, onRefresh }) => {
               value={values.status}
               onChange={(e) => setFieldValue("status", e.target.value)}
             >
-              {statusName.map((status, i) => (
-                <FormControlLabel
-                  key={i}
-                  value={status}
-                  control={<Radio size="small" />}
-                  label={status}
-                  checked={values.status === status}
-                />
-              ))}
+              {statusName.map((status) => {
+                const style = statusStyles[status];
+                const isSelected = values.status === status;
+
+                return (
+                  <FormControlLabel
+                    key={status}
+                    value={status}
+                    control={
+                      <Radio
+                        size="small"
+                        sx={{
+                          color: style.radioColor,
+                          "&.Mui-checked": {
+                            color: style.radioColor,
+                          },
+                        }}
+                      />
+                    }
+                    label={status}
+                    checked={isSelected}
+                    sx={{
+                      border: `2px solid ${isSelected ? style.activeBorder : style.idleBorder}`,
+                      backgroundColor: isSelected ? style.activeBg : "#ffffff",
+                      "&:hover": {
+                        backgroundColor: style.activeBg,
+                        borderColor: style.activeBorder,
+                      },
+                      // Style the text label inside the FormControlLabel
+                      "& .MuiTypography-root": {
+                        fontSize: "0.85rem !important",
+                        fontWeight: isSelected ? "600 !important" : "500 !important",
+                        color: isSelected ? style.activeBorder : "#6b7280",
+                      },
+                    }}
+                  />
+                );
+              })}
             </StyledRadioGroup>
             {errors.status && touched.status && (
               <Typography
@@ -329,8 +348,6 @@ const TaskManage = ({ editableInfo, modalStat, onRefresh }) => {
           </Box>
 
           <Divider sx={{ margin: "20px 0", borderColor: "#e5e7eb" }} />
-
-          
 
           {/* Remarks */}
           <Box sx={{ marginBottom: "20px" }}>
