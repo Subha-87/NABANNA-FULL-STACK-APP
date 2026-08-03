@@ -489,8 +489,14 @@ export const RenewalAMCBtn = () => {
       toast.error("Somthing Went Wrong");
     }
   };
-  const activateAMC = () => {
-    alert("Renew Btn Clicked")
+  const activateAMC = async(renewData) => {
+    // api post call for submit renewData//
+    try {
+      const resp = await axios.put("/nabannaSystem/activate-renewal",renewData)
+      console.log(resp)
+    } catch (error) {
+      console.error(error)
+    }
     setOpen(false)// modal close
   }
   return (

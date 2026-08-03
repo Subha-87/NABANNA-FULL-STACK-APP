@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const hardwareCollection = require("../models/hardwareModel");
 const amcCollection = require("../models/amcMaster");
 const amcModel = require("../models/amcMaster");
@@ -81,8 +82,6 @@ const createHardwareSetup = async (req, res) => {
         installationDate = new Date(date);
       }
     }**/
-
-    
 
     let installDate = null;
 
@@ -353,7 +352,26 @@ const removeRepairData = async (req, resp) => {
 // When Renwal Button Clicked on UI//
 const getAMCData = async (req, resp) => {
   try {
-    const contract = await amcCollection.findOne({ status: "ACTIVE" });
+    const previousContract = await amcCollection.findOne();
+    if (!previousContract) return;
+    const contractName = previousContract.contractName;
+    const DEVICE_TYPES = ["CPU", "MONITOR", "ALL_IN_ONE", "LAPTOP", "UPS"];
+    let total = 0;
+    for (const device of DEVICE_TYPES) {
+      total += await hardwareCollection.countDocuments({
+        [`systems.${device}.warrantyType`]: "AMC",
+        [`systems.${device}.amcStatus`]: "NONE",
+        [`systems.${device}.amcContract`]: null,
+      });
+    }
+    return sendSuccess(resp, 200, "AMC Data", {
+      machinesWaiting: total,
+
+      suggestedStartDate: new Date().toISOString().split("T")[0],
+
+      contractName: contractName || null,
+    });
+    /*const contract = await amcCollection.findOne({ status: "ACTIVE" });
     if (!contract) return sendError(resp, 404, "No Active AMC Contract Found");
     const totalMachines = await hardwareCollection.countDocuments({
       $or: [
@@ -377,7 +395,7 @@ const getAMCData = async (req, resp) => {
       endDate,
       status: contract.status,
       machineCovered: totalMachines,
-    });
+    });*/
   } catch (error) {
     console.error(error);
     return sendError(resp, 500, "Internal Server Error");
@@ -385,7 +403,60 @@ const getAMCData = async (req, resp) => {
 };
 
 // When Renewal Modal Open and activate Renew AMC Button//
-const renewAMCData = async (req, resp) => {};
+
+const renewAMCData = async (req, res) => {
+  //const session = await mongoose.startSession();
+
+  try {
+    //session.startTransaction();
+
+    const { contractName, vendor, contractNo, startDate, remarks } = req.body;
+
+    if (!vendor || !contractNo || !startDate) {
+      //await session.abortTransaction();
+
+      return sendError(res, 400, "All fields are required");
+    }
+
+    // Expire previous contract
+    await amcCollection.updateMany(
+      { status: "ACTIVE" },
+      { status: "EXPIRED" },
+      { session },
+    );
+
+    // Create new contract
+    const contract = await amcCollection.create(
+      [
+        {
+          contractName,
+          vendor,
+          contractNo,
+          startDate: new Date(startDate),
+          durationYears: 1,
+          status: "ACTIVE",
+          remarks,
+        },
+      ],
+      
+    );
+
+    const contractId = contract[0]._id;
+
+    // Activate all eligible machines
+    await activateAMCForMachines(contractId);
+
+    //await session.commitTransaction();
+
+    return sendSuccess(res, 200, "AMC Renewed Successfully", contract[0]);
+  } catch (error) {
+    //await session.abortTransaction();
+
+    console.error(error);
+
+    return sendError(res, 500, "Internal Server Error");
+  } 
+};
 
 module.exports = {
   getAllData,
@@ -400,4 +471,5 @@ module.exports = {
   editRepairData,
   removeRepairData,
   getAMCData,
+  renewAMCData
 };
