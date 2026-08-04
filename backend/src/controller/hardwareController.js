@@ -4,6 +4,7 @@ const amcCollection = require("../models/amcMaster");
 const amcModel = require("../models/amcMaster");
 const systemRepairCollection = require("../models/repairModel");
 const { sendSuccess, sendError } = require("../utils/apiResponse");
+const { activateAMCForMachines } = require("../services/amcService");
 
 // Get All Nabanna System Details in warranty/AMC of User Hardware Set Up //
 
@@ -350,13 +351,21 @@ const removeRepairData = async (req, resp) => {
 };
 
 // When Renwal Button Clicked on UI//
-const getAMCData = async (req, resp) => {
+const getAMCData = async (req, res) => {
   try {
-    const previousContract = await amcCollection.findOne();
-    if (!previousContract) return;
-    const contractName = previousContract.contractName;
+    const activeContract = await amcCollection.findOne({
+      status: "ACTIVE",
+    });
+
+    if (!activeContract)
+      return sendError(res, 404, "No Active AMC Contract Found");
+
+    // Single device types
     const DEVICE_TYPES = ["CPU", "MONITOR", "ALL_IN_ONE", "LAPTOP", "UPS"];
+
     let total = 0;
+
+    // Count CPU / Monitor / UPS / Laptop / All-in-One
     for (const device of DEVICE_TYPES) {
       total += await hardwareCollection.countDocuments({
         [`systems.${device}.warrantyType`]: "AMC",
@@ -364,40 +373,99 @@ const getAMCData = async (req, resp) => {
         [`systems.${device}.amcContract`]: null,
       });
     }
-    return sendSuccess(resp, 200, "AMC Data", {
+
+    // Count every Printer device
+    const printerCount = await hardwareCollection.aggregate([
+      { $unwind: "$systems.PRINTER" },
+      {
+        $match: {
+          "systems.PRINTER.warrantyType": "AMC",
+          "systems.PRINTER.amcStatus": "NONE",
+          "systems.PRINTER.amcContract": null,
+        },
+      },
+      {
+        $count: "total",
+      },
+    ]);
+
+    total += printerCount.length ? printerCount[0].total : 0;
+
+    // Count every Scanner device
+    const scannerCount = await hardwareCollection.aggregate([
+      { $unwind: "$systems.SCANNER" },
+      {
+        $match: {
+          "systems.SCANNER.warrantyType": "AMC",
+          "systems.SCANNER.amcStatus": "NONE",
+          "systems.SCANNER.amcContract": null,
+        },
+      },
+      {
+        $count: "total",
+      },
+    ]);
+
+    total += scannerCount.length ? scannerCount[0].total : 0;
+    if (total === 0)
+      return sendError(res, 404, "No Device Available awaiting for AMC ");
+
+    return sendSuccess(res, 200, "AMC Data", {
+      contractName: activeContract.contractName,
+      agencyName: activeContract.agencyName,
+      workOrderNo: activeContract.workOrderNo,
+      contractNo: activeContract.contractNo,
+
+      startDate: activeContract.startDate,
+      endDate: activeContract.endDate,
+
+      status: activeContract.status,
+
+      coveredDevices: activeContract.coveredMachines,
+
       machinesWaiting: total,
-
-      suggestedStartDate: new Date().toISOString().split("T")[0],
-
-      contractName: contractName || null,
     });
-    /*const contract = await amcCollection.findOne({ status: "ACTIVE" });
-    if (!contract) return sendError(resp, 404, "No Active AMC Contract Found");
-    const totalMachines = await hardwareCollection.countDocuments({
-      $or: [
-        { "systems.CPU.warrantyType": "AMC" },
-        { "systems.MONITOR.warrantyType": "AMC" },
-        { "systems.ALL_IN_ONE.warrantyType": "AMC" },
-        { "systems.LAPTOP.warrantyType": "AMC" },
-        { "systems.UPS.warrantyType": "AMC" },
-        { "systems.PRINTER.warrantyType": "AMC" },
-        { "systems.SCANNER.warrantyType": "AMC" },
-      ],
-    });
-    const endDate = new Date(contract.startDate);
-    endDate.setFullYear(endDate.getFullYear() + contract.durationYears);
-    endDate.setDate(endDate.getDate() - 1);
-    return sendSuccess(resp, 200, "AMC Found", {
-      contractName: contract.contractName,
-      vendor: contract.vendor,
-      contractNo: contract.contractNo,
-      startDate: contract.startDate,
-      endDate,
-      status: contract.status,
-      machineCovered: totalMachines,
-    });*/
   } catch (error) {
     console.error(error);
+    return sendError(res, 500, "Internal Server Error");
+  }
+};
+
+const activateAMC = async (req, resp) => {
+  try {
+    // Find current active AMC contract
+    const activeContract = await amcCollection.findOne({
+      status: "ACTIVE",
+    });
+
+    if (!activeContract)
+      return sendError(resp, 404, "No Active AMC Contract Found");
+
+    // Activate waiting devices
+    const activatedDevices = await activateAMCForMachines(activeContract._id);
+    console.log("total",activatedDevices)
+
+    // Update covered device count
+    activeContract.coveredDevices += activatedDevices;
+
+    await amcModel.updateOne(
+      { _id: activeContract._id },
+      {
+        $inc: {
+          coveredDevices: activatedDevices,
+        },
+      },
+    );
+
+    return sendSuccess(
+      resp,
+      200,
+      `${activatedDevices} devices activated successfully.`,
+      activeContract,
+    );
+  } catch (error) {
+    console.error(error);
+
     return sendError(resp, 500, "Internal Server Error");
   }
 };
@@ -406,6 +474,7 @@ const getAMCData = async (req, resp) => {
 
 const renewAMCData = async (req, res) => {
   //const session = await mongoose.startSession();
+  console.log(req.body);
 
   try {
     //session.startTransaction();
@@ -419,43 +488,34 @@ const renewAMCData = async (req, res) => {
     }
 
     // Expire previous contract
-    await amcCollection.updateMany(
-      { status: "ACTIVE" },
-      { status: "EXPIRED" },
-      { session },
-    );
+    await amcCollection.updateMany({ status: "ACTIVE" }, { status: "EXPIRED" });
 
     // Create new contract
-    const contract = await amcCollection.create(
-      [
-        {
-          contractName,
-          vendor,
-          contractNo,
-          startDate: new Date(startDate),
-          durationYears: 1,
-          status: "ACTIVE",
-          remarks,
-        },
-      ],
-      
-    );
+    const contract = await amcCollection.create({
+      contractName,
+      agencyName: vendor,
+      contractNo,
+      startDate: new Date(startDate),
+      durationYears: 1,
+      status: "ACTIVE",
+      remarks,
+    });
 
-    const contractId = contract[0]._id;
+    const contractId = contract._id;
 
     // Activate all eligible machines
-    await activateAMCForMachines(contractId);
+    //await activateAMCForMachines(contractId);
 
     //await session.commitTransaction();
 
-    return sendSuccess(res, 200, "AMC Renewed Successfully", contract[0]);
+    return sendSuccess(res, 200, "AMC Renewed Successfully", contract);
   } catch (error) {
     //await session.abortTransaction();
 
     console.error(error);
 
     return sendError(res, 500, "Internal Server Error");
-  } 
+  }
 };
 
 module.exports = {
@@ -471,5 +531,6 @@ module.exports = {
   editRepairData,
   removeRepairData,
   getAMCData,
-  renewAMCData
+  activateAMC,
+  renewAMCData,
 };

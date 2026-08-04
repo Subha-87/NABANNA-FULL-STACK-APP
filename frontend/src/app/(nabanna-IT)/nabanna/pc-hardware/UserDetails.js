@@ -6,7 +6,7 @@ import {
   SearchSystem,
   AmcExport,
   SystemStatusView,
-  SystemFind,RenewalAMCBtn
+  SystemFind,ActivateAMCBtn,RenewalAMCBtn
 } from "../../component/Button/NabannaSystemBtn";
 import { handleAxiosError} from "@/app/utils/axiosError";
 
@@ -44,6 +44,7 @@ const UserDetails = () => {
         <SystemStatusView />
         <SystemFind />
         <SearchSystem />
+        <ActivateAMCBtn/>
         <RenewalAMCBtn/>
         <AmcExport />
       </div>

@@ -127,10 +127,11 @@ const MachineEntry = ({ onSuccess, modStat }) => {
       };
       const resp = await axios.post("/NabannaSystem", payload);
       const success_msg = resp.data?.message || "Entry Successful";
-      SweetSwal.fire({ title: success_msg, icon: "success", draggable: true });
+      //SweetSwal.fire({ title: success_msg, icon: "success", draggable: true });
+      toast.success(success_msg)
       onSuccess();
-      //resetForm();
-      //modStat(true); // Standardized close trigger
+      resetForm();
+      modStat(true); // Standardized close trigger
     } catch (error) {
       const { generalError } = handleAxiosError(error);
       toast.error(generalError || "Something went wrong!");

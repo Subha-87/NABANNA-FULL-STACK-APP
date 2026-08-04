@@ -6,10 +6,15 @@ const amcMasterSchema = new Schema(
       type: String,
       default: "Nabanna Hardware AMC",
     },
-    workOrderNo: String,
-    agencyName: {
+    workOrderNo: {
       type: String,
       default: "",
+      trim: true,
+    },
+    agencyName: {
+      type: String,
+      required: true,
+      trim: true,
     },
     contractNo: {
       type: String,
@@ -23,6 +28,11 @@ const amcMasterSchema = new Schema(
       type: Number,
       default: 1,
     },
+
+    coveredDevices: {
+      type: Number,
+      default: 0,
+    },
     status: {
       type: String,
       enum: ["ACTIVE", "EXPIRED"],
@@ -35,6 +45,8 @@ const amcMasterSchema = new Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
 );
 

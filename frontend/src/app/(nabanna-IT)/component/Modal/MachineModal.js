@@ -28,7 +28,8 @@ import {
 import { useAxios } from "@/app/Hook/useAxios";
 import { handleAxiosError } from "@/app/utils/axiosError";
 import MachineInfoCard from "../Cards/MachineCards/MachineInfoCard";
-import RenewalCard from "./ModalCard/RenewalCard";
+import {RenewalCard,ActiveAMCCard} from "./ModalCard/AMCCard";
+
 
 export const AddMachineModal = ({ isModalOpen, isModalClose, onSuccess }) => {
   const handleModal = () => {
@@ -418,6 +419,16 @@ export const RepairModal = ({
     </Modal>
   );
 };
+
+export const ActivateModal = ({isModalOpen,isModalClose,activateData,handleActivate}) => {
+  return(
+    <Modal open={isModalOpen} onClose={isModalClose}>
+      <Box sx={modalStyle}>
+          <ActiveAMCCard onClose={isModalClose} amcData={activateData} onActivate={handleActivate}/>
+       </Box>
+    </Modal>
+  )
+}
 
 export const RenewModal = ({isModalOpen,isModalClose,renewData,handleRenew}) => {
 
