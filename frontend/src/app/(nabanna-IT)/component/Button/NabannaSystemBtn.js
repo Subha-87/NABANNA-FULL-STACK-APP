@@ -476,6 +476,7 @@ export const DeleteSystemBtn = ({ del_id, refreshData }) => {
   );
 };
 
+// Activate AMC Button //
 export const ActivateAMCBtn = () => {
   const [open, setOpen] = useState(false);
   const [currentAMCData, setCurrentAMCData] = useState(null);

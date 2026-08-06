@@ -2,6 +2,7 @@ const Hardware = require("../models/hardwareModel");
 
 // Activate all waiting AMC devices
 const activateAMCForMachines = async (contractId) => {
+  //console.log(contractId);
   let totalActivated = 0;
 
   const DEVICE_TYPES = ["CPU", "MONITOR", "ALL_IN_ONE", "LAPTOP", "UPS"];
@@ -26,22 +27,18 @@ const activateAMCForMachines = async (contractId) => {
 
     totalActivated += result.modifiedCount;
   }
-  console.log("main Device:",totalActivated)
+  //console.log("main Device:", totalActivated);
 
   // -------------------------
   // Printer Array
   // -------------------------
   const printerResult = await Hardware.updateMany(
     {
-      systems: {
+      "systems.PRINTER": {
         $elemMatch: {
-          PRINTER: {
-            $elemMatch: {
-              warrantyType: "AMC",
-              amcStatus: "NONE",
-              amcContract: null,
-            },
-          },
+          warrantyType: "AMC",
+          amcStatus: "NONE",
+          amcContract: null,
         },
       },
     },
@@ -62,7 +59,9 @@ const activateAMCForMachines = async (contractId) => {
     },
   );
 
-  console.log("printer:",printerResult)
+  //console.log(printerResult.matchedCount);
+  //console.log(printerResult.modifiedCount);
+
   totalActivated += printerResult.modifiedCount;
 
   // -------------------------
@@ -70,13 +69,11 @@ const activateAMCForMachines = async (contractId) => {
   // -------------------------
   const scannerResult = await Hardware.updateMany(
     {
-      systems: {
+      "systems.SCANNER": {
         $elemMatch: {
-          SCANNER: {
-            warrantyType: "AMC",
-            amcStatus: "NONE",
-            amcContract: null,
-          },
+          warrantyType: "AMC",
+          amcStatus: "NONE",
+          amcContract: null,
         },
       },
     },
@@ -96,7 +93,8 @@ const activateAMCForMachines = async (contractId) => {
       ],
     },
   );
- console.log("scanner:",scannerResult)
+  //console.log(scannerResult.matchedCount);
+  //console.log(scannerResult.modifiedCount);
   totalActivated += scannerResult.modifiedCount;
 
   return totalActivated;
