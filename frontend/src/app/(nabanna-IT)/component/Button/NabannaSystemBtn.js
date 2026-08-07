@@ -490,26 +490,26 @@ export const ActivateAMCBtn = () => {
       console.log(resp);
       const amcData = resp.data?.data;
       setCurrentAMCData(amcData); //1 set the data
-      setOpen(true);  // open modal 
+      setOpen(true); // open modal
     } catch (error) {
       const errMSG = error.response.data.message;
       //console.error(errMSG);
       toast.error(errMSG || "Somthing Went Wrong");
     }
   };
- 
+
   // Activate AMC Button Clicked //
-  const activateAmc = async() => {
+  const activateAmc = async () => {
     try {
-      const resp = await axios.put("/nabannaSystem/activate-amc")
-      console.log(resp)
-      const successMSG = resp.data.message 
-      toast.success(successMSG)
+      const resp = await axios.put("/nabannaSystem/activate-amc");
+      console.log(resp);
+      const successMSG = resp.data.message;
+      toast.success(successMSG);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-    setOpen(false)// modal close
-  }
+    setOpen(false); // modal close
+  };
   return (
     <>
       <Button variant="contained" color="success" onClick={modalOpenBtn}>
@@ -527,13 +527,14 @@ export const ActivateAMCBtn = () => {
 
 export const RenewalAMCBtn = () => {
   const [open, setOpen] = useState(false);
-  const [amcData, setAmcData] = useState(null);
+  const [renewalData, setRenewalData] = useState(null);
   const axios = useAxios();
+  // Renew AMC Button Clicks and Modal UI appears where renewal-details api data rendered//
   const handleAMC = async () => {
     try {
-      const resp = await axios.get("/nabannaSystem/renewal-detail");
-      //console.log(resp);
-      setAmcData(resp.data?.data);
+      const resp = await axios.get("/nabannaSystem/renewal-details");
+      //console.log(resp.data?.data);
+      setRenewalData(resp.data?.data);
       setOpen(true);
     } catch (error) {
       const errMSG = error.response.data.message;
@@ -541,9 +542,11 @@ export const RenewalAMCBtn = () => {
       toast.error(errMSG || "Somthing Went Wrong");
     }
   };
-  const activateAMC = async (renewData) => {
+
+  // In Modal Renew amc button clicked //
+  const amcRenewal = async (renewData) => {
     // api post call for submit renewData//
-    try {
+    /*try {
       const resp = await axios.put(
         "/nabannaSystem/activate-renewal",
         renewData,
@@ -552,8 +555,8 @@ export const RenewalAMCBtn = () => {
     } catch (error) {
       const errMSG = error.response.data.message;
       console.error(errMSG);
-    }
-    setOpen(false); // modal close
+    }*/
+    //setOpen(false); // modal close
   };
   return (
     <>
@@ -563,9 +566,18 @@ export const RenewalAMCBtn = () => {
       <RenewModal
         isModalOpen={open}
         isModalClose={() => setOpen(false)}
-        renewData={amcData}
-        handleRenew={activateAMC}
+        renewData={renewalData}
+        handleRenew={amcRenewal}
       />
     </>
   );
+};
+
+const modal = () => {
+  <RenewModal
+    isModalOpen={open}
+    isModalClose={() => setOpen(false)}
+    renewData={setRenewalData}
+    handleRenew={activateAMC}
+  />;
 };

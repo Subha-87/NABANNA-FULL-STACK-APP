@@ -16,6 +16,7 @@ const {
   removeRepairData,
   getAMCData,
   activateAMC,
+  getRenewalData,
   renewAMCData
 } = require("../controller/hardwareController");
 
@@ -29,6 +30,7 @@ router.get("/export-amc", verifyToken, exportAmcSystems);
 router.get("/search-machine", verifyToken, searchHardware);
 router.get("/amc-detail", verifyToken, getAMCData);
 router.put("/activate-amc",verifyToken,activateAMC)
+router.get("/renewal-details",verifyToken,getRenewalData)
 router.put("/activate-renewal",verifyToken,renewAMCData)
 
 // THIS IS MACHINE REPAIR ROUTES //

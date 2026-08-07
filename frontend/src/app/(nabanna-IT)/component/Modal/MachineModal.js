@@ -28,8 +28,7 @@ import {
 import { useAxios } from "@/app/Hook/useAxios";
 import { handleAxiosError } from "@/app/utils/axiosError";
 import MachineInfoCard from "../Cards/MachineCards/MachineInfoCard";
-import {RenewalCard,ActiveAMCCard} from "./ModalCard/AMCCard";
-
+import { RenewalCard, ActiveAMCCard } from "./ModalCard/AMCCard";
 
 export const AddMachineModal = ({ isModalOpen, isModalClose, onSuccess }) => {
   const handleModal = () => {
@@ -420,24 +419,40 @@ export const RepairModal = ({
   );
 };
 
-export const ActivateModal = ({isModalOpen,isModalClose,activateData,handleActivate}) => {
-  return(
+export const ActivateModal = ({
+  isModalOpen,
+  isModalClose,
+  activateData,
+  handleActivate,
+}) => {
+  return (
     <Modal open={isModalOpen} onClose={isModalClose}>
       <Box sx={modalStyle}>
-          <ActiveAMCCard onClose={isModalClose} amcData={activateData} onActivate={handleActivate}/>
-       </Box>
+        <ActiveAMCCard
+          onClose={isModalClose}
+          amcData={activateData}
+          onActivate={handleActivate}
+        />
+      </Box>
     </Modal>
-  )
-}
+  );
+};
 
-export const RenewModal = ({isModalOpen,isModalClose,renewData,handleRenew}) => {
-
-  
-  return(
+export const RenewModal = ({
+  isModalOpen,
+  isModalClose,
+  renewData,
+  handleRenew,
+}) => {
+  return (
     <Modal open={isModalOpen} onClose={isModalClose}>
-       <Box sx={modalStyle}>
-          <RenewalCard onClose={isModalClose} amcData={renewData} onRenew={handleRenew}/>
-       </Box>
+      <Box sx={modalStyle}>
+        <RenewalCard
+          onClose={isModalClose}
+          amcDetails={renewData}
+          onRenew={handleRenew}
+        />
+      </Box>
     </Modal>
-  )
-}
+  );
+};

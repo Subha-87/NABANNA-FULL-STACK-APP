@@ -353,11 +353,11 @@ const removeRepairData = async (req, resp) => {
 // When Renwal Button Clicked on UI//
 const getAMCData = async (req, res) => {
   try {
-    const activeContract = await amcCollection.findOne({
+    const previousContract = await amcCollection.findOne({
       status: "ACTIVE",
     });
 
-    if (!activeContract)
+    if (!previousContract)
       return sendError(res, 404, "No Active AMC Contract Found");
 
     // Single device types
@@ -411,17 +411,17 @@ const getAMCData = async (req, res) => {
       return sendError(res, 404, "No Device Available awaiting for AMC ");
 
     return sendSuccess(res, 200, "AMC Data", {
-      contractName: activeContract.contractName,
-      agencyName: activeContract.agencyName,
-      workOrderNo: activeContract.workOrderNo,
-      contractNo: activeContract.contractNo,
+      contractName: previousContract.contractName,
+      agencyName: previousContract.agencyName,
+      workOrderNo: previousContract.workOrderNo,
+      contractNo: previousContract.contractNo,
 
-      startDate: activeContract.startDate,
-      endDate: activeContract.endDate,
+      startDate: previousContract.startDate,
+      endDate: previousContract.endDate,
 
-      status: activeContract.status,
+      status: previousContract.status,
 
-      coveredDevices: activeContract.coveredMachines,
+      coveredDevices: previousContract.coveredMachines,
 
       machinesWaiting: total,
     });
@@ -434,22 +434,22 @@ const getAMCData = async (req, res) => {
 const activateAMC = async (req, resp) => {
   try {
     // Find current active AMC contract
-    const activeContract = await amcCollection.findOne({
+    const previousContract = await amcCollection.findOne({
       status: "ACTIVE",
     });
 
-    if (!activeContract)
+    if (!previousContract)
       return sendError(resp, 404, "No Active AMC Contract Found");
 
     // Activate waiting devices
-    const activatedDevices = await activateAMCForMachines(activeContract._id);
-    console.log("total",activatedDevices)
+    const activatedDevices = await activateAMCForMachines(previousContract._id);
+    console.log("total", activatedDevices);
 
     // Update covered device count
-    activeContract.coveredDevices += activatedDevices;
+    previousContract.coveredDevices += activatedDevices;
 
     await amcModel.updateOne(
-      { _id: activeContract._id },
+      { _id: previousContract._id },
       {
         $inc: {
           coveredDevices: activatedDevices,
@@ -461,7 +461,7 @@ const activateAMC = async (req, resp) => {
       resp,
       200,
       `${activatedDevices} devices activated successfully.`,
-      activeContract,
+      previousContract,
     );
   } catch (error) {
     console.error(error);
@@ -471,6 +471,77 @@ const activateAMC = async (req, resp) => {
 };
 
 // When Renewal Modal Open and activate Renew AMC Button//
+
+const getRenewalData = async (req, res) => {
+  try {
+    // Current active contract
+    const previousContract = await amcCollection
+      .findOne()
+      .sort({ createdAt: -1 });
+
+    if (!previousContract) return sendError(res, 404, "No AMC Contract Found");
+
+    // Count expired devices (eligible for renewal)
+    let eligibleDevices = 0;
+
+    const DEVICE_TYPES = ["CPU", "MONITOR", "ALL_IN_ONE", "LAPTOP", "UPS"];
+
+    // Single devices
+    for (const device of DEVICE_TYPES) {
+      eligibleDevices += await hardwareCollection.countDocuments({
+        [`systems.${device}.warrantyType`]: "AMC",
+        [`systems.${device}.amcStatus`]: "EXPIRED",
+      });
+    }
+
+    // Printers
+    const printerCount = await hardwareCollection.aggregate([
+      { $unwind: "$systems.PRINTER" },
+      {
+        $match: {
+          "systems.PRINTER.warrantyType": "AMC",
+          "systems.PRINTER.amcStatus": "EXPIRED",
+        },
+      },
+      { $count: "total" },
+    ]);
+
+    eligibleDevices += printerCount.length ? printerCount[0].total : 0;
+
+    // Scanners
+    const scannerCount = await hardwareCollection.aggregate([
+      { $unwind: "$systems.SCANNER" },
+      {
+        $match: {
+          "systems.SCANNER.warrantyType": "AMC",
+          "systems.SCANNER.amcStatus": "EXPIRED",
+        },
+      },
+      { $count: "total" },
+    ]);
+
+    eligibleDevices += scannerCount.length ? scannerCount[0].total : 0;
+
+    // Suggested next contract dates
+    const suggestedStartDate = new Date(previousContract.endDate);
+    suggestedStartDate.setDate(suggestedStartDate.getDate() + 1);
+
+    const suggestedEndDate = new Date(suggestedStartDate);
+    suggestedEndDate.setFullYear(suggestedEndDate.getFullYear() + 1);
+    suggestedEndDate.setDate(suggestedEndDate.getDate() - 1);
+
+    return sendSuccess(res, 200, "Renewal Data", {
+      previousContract,
+      eligibleDevices,
+
+      suggestedStartDate,
+      suggestedEndDate,
+    });
+  } catch (error) {
+    console.error(error);
+    return sendError(res, 500, "Internal Server Error");
+  }
+};
 
 const renewAMCData = async (req, res) => {
   //const session = await mongoose.startSession();
@@ -532,5 +603,6 @@ module.exports = {
   removeRepairData,
   getAMCData,
   activateAMC,
+  getRenewalData,
   renewAMCData,
 };

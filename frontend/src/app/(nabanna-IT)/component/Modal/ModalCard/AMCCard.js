@@ -19,17 +19,39 @@ import {
   CheckCircle,
   Assignment,
   Description,
+  Business,
 } from "@mui/icons-material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
-export const RenewalCard = ({ onClose, onRenew, amcData }) => {
-  const validationSchema = Yup.object({
-    vendor: Yup.string().required("Agency name is required"),
+export const RenewalCard = ({ onClose, onRenew, amcDetails }) => {
+  const { previousContract, suggestedStartDate, suggestedEndDate } = amcDetails;
+  //console.log(previousContract)
+  const minimumDate = suggestedStartDate.split("T")[0];
+  const calculateEndDate = (startDate) => {
+    //console.log(startDate)
+    if (!startDate) return "";
 
-    contractNo: Yup.string().required("Contract number is required"),
+    const end = new Date(startDate);
 
-    startDate: Yup.date().required("Start date is required"),
+    end.setFullYear(end.getFullYear() + 1);
+
+    end.setDate(end.getDate() - 1);
+
+    return end.toLocaleDateString("en-GB");
+  };
+  const renewalValidationSchema = Yup.object({
+    agencyName: Yup.string().trim().required("Agency Name is required"),
+
+    workOrderNo: Yup.string().trim().required("Work Order Number is required"),
+
+    contractNo: Yup.string().trim().required("Contract Number is required"),
+
+    startDate: Yup.date()
+      .min(minimumDate, `Start date cannot be earlier than ${minimumDate}`)
+      .required("AMC Start Date is required"),
+
+    remarks: Yup.string().max(300, "Maximum 300 characters"),
   });
   const formatDate = (date) =>
     new Date(date).toLocaleDateString("en-GB", {
@@ -42,7 +64,7 @@ export const RenewalCard = ({ onClose, onRenew, amcData }) => {
     <Card
       elevation={0}
       sx={{
-        width: 720,
+        width: 760,
         borderRadius: 3,
       }}
     >
@@ -54,143 +76,246 @@ export const RenewalCard = ({ onClose, onRenew, amcData }) => {
           p: 2.5,
         }}
       >
-        <Box display="flex" alignItems="center" gap={2}>
-          <Autorenew sx={{ fontSize: 34 }} />
+        <Box display="flex" gap={2} alignItems="center">
+          <Autorenew sx={{ fontSize: 36 }} />
 
           <Box>
             <Typography variant="h5" fontWeight={700}>
-              Renew Annual AMC
+              Renew AMC Contract
             </Typography>
 
-            <Typography variant="body2" sx={{ opacity: 0.9 }}>
-              Create a new AMC contract and activate all eligible machines.
+            <Typography variant="body2">
+              Create the next Annual Maintenance Contract
             </Typography>
           </Box>
         </Box>
       </Box>
 
       <CardContent sx={{ p: 4 }}>
-        <Alert severity="info" sx={{ mb: 3 }}>
-          This process will create a new AMC contract and activate every
-          eligible machine currently waiting for AMC coverage.
-        </Alert>
+        {/* Previous Contract */}
+        <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>
+          Previous AMC Contract
+        </Typography>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Typography variant="caption" color="text.secondary">
-              Contract Name
-            </Typography>
-
-            <Typography fontWeight={700}>{amcData.contractName}</Typography>
-          </Grid>
-
-          <Grid item xs={6}>
-            <Typography variant="caption" color="text.secondary">
-              Machines Waiting
-            </Typography>
-
-            <Box display="flex" alignItems="center" gap={1}>
-              <Inventory2 color="success" />
-
-              <Typography fontWeight={700}>
-                {amcData.machinesWaiting}
-              </Typography>
-            </Box>
-          </Grid>
-
-          <Grid item xs={6}>
-            <Typography variant="caption" color="text.secondary">
-              Suggested Start Date
-            </Typography>
-
-            <Box display="flex" alignItems="center" gap={1}>
-              <CalendarMonth color="primary" />
-
-              <Typography fontWeight={700}>
-                {formatDate(amcData.suggestedStartDate)}
-              </Typography>
-            </Box>
-          </Grid>
-        </Grid>
-
-        <Divider sx={{ my: 4 }} />
-
-        {/* These will later be connected to Formik */}
-        <Formik
-          enableReinitialize
-          initialValues={{
-            contractName: amcData.contractName,
-            vendor: "",
-            contractNo: "",
-            startDate: amcData.suggestedStartDate?.split("T")[0] || "",
+        <Card
+          variant="outlined"
+          sx={{
+            borderRadius: 2,
+            mb: 4,
           }}
-          validationSchema={validationSchema}
+        >
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="caption" color="text.secondary">
+                  Contract Name
+                </Typography>
+
+                <Typography fontWeight={700}>
+                  {previousContract.contractName}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography variant="caption" color="text.secondary">
+                  Agency
+                </Typography>
+
+                <Box display="flex" gap={1} alignItems="center">
+                  <Business fontSize="small" color="primary" />
+
+                  <Typography fontWeight={700}>
+                    {previousContract.vendor}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography variant="caption" color="text.secondary">
+                  Work Order No
+                </Typography>
+
+                <Box display="flex" gap={1} alignItems="center">
+                  <Description fontSize="small" color="primary" />
+
+                  <Typography fontWeight={700}>
+                    {previousContract.workOrderNo}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography variant="caption" color="text.secondary">
+                  Contract No
+                </Typography>
+
+                <Typography fontWeight={700}>
+                  {previousContract.contractNo}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography variant="caption" color="text.secondary">
+                  AMC Period
+                </Typography>
+
+                <Box display="flex" gap={1} alignItems="center">
+                  <CalendarMonth fontSize="small" color="primary" />
+
+                  <Typography fontWeight={700}>
+                    {formatDate(previousContract.startDate)} -{" "}
+                    {formatDate(previousContract.endDate)}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid item xs={3}>
+                <Typography variant="caption" color="text.secondary">
+                  Covered Devices
+                </Typography>
+
+                <Box display="flex" gap={1} alignItems="center">
+                  <Inventory2 fontSize="small" color="success" />
+
+                  <Typography fontWeight={700}>
+                    {previousContract.coveredDevices}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid item xs={3}>
+                <Typography variant="caption" color="text.secondary">
+                  Status
+                </Typography>
+
+                <Box mt={0.5}>
+                  <Chip
+                    label={previousContract.status}
+                    color={
+                      previousContract.status === "ACTIVE" ? "success" : "error"
+                    }
+                    size="small"
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+
+        <Divider sx={{ mb: 4 }} />
+
+        {/* Form */}
+        <Formik
+          initialValues={{
+            agencyName: "",
+            workOrderNo: "",
+            contractNo: "",
+            startDate: suggestedStartDate.split("T")[0],
+            remarks: "",
+          }}
+          validationSchema={renewalValidationSchema}
           onSubmit={(values) => onRenew(values)}
         >
-          {({ values, errors, touched }) => (
+          {({values}) => (
             <Form>
               <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>
-                New AMC Details
+                New AMC Contract
               </Typography>
 
               <Grid container spacing={2}>
-                {/* Agency */}
                 <Grid item xs={12}>
-                  <Field name="vendor">
-                    {({ field }) => (
+                  <Field name="agencyName">
+                    {({ field, meta }) => (
                       <TextField
                         {...field}
                         fullWidth
-                        label="Agency / Vendor"
-                        placeholder="Enter Agency Name"
-                        error={touched.vendor && Boolean(errors.vendor)}
-                        helperText={touched.vendor && errors.vendor}
+                        label="Agency Name"
+                        error={meta.touched && Boolean(meta.error)}
+                        helperText={meta.touched && meta.error}
                       />
                     )}
                   </Field>
                 </Grid>
 
-                {/* Contract Number */}
+                <Grid item xs={6}>
+                  <Field name="workOrderNo">
+                    {({ field, meta }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        label="Work Order No."
+                        error={meta.touched && Boolean(meta.error)}
+                        helperText={meta.touched && meta.error}
+                      />
+                    )}
+                  </Field>
+                </Grid>
+
                 <Grid item xs={6}>
                   <Field name="contractNo">
-                    {({ field }) => (
+                    {({ field, meta }) => (
                       <TextField
                         {...field}
                         fullWidth
                         label="Contract Number"
-                        placeholder="AMC/2026/001"
-                        error={touched.contractNo && Boolean(errors.contractNo)}
-                        helperText={touched.contractNo && errors.contractNo}
+                        error={meta.touched && Boolean(meta.error)}
+                        helperText={meta.touched && meta.error}
                       />
                     )}
                   </Field>
                 </Grid>
 
-                {/* Start Date */}
                 <Grid item xs={6}>
                   <Field name="startDate">
-                    {({ field }) => (
+                    {({ field, meta }) => (
                       <TextField
                         {...field}
                         fullWidth
                         type="date"
                         label="AMC Start Date"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        error={touched.startDate && Boolean(errors.startDate)}
-                        helperText={touched.startDate && errors.startDate}
+                        InputLabelProps={{ shrink: true }}
+                        error={meta.touched && Boolean(meta.error)}
+                        helperText={meta.touched && meta.error}
+                      />
+                    )}
+                  </Field>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    disabled
+                    label="AMC End Date"
+                    value={calculateEndDate(values.startDate)}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Field name="remarks">
+                    {({ field, meta }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        multiline
+                        rows={3}
+                        label="Remarks"
+                        error={meta.touched && Boolean(meta.error)}
+                        helperText={meta.touched && meta.error}
                       />
                     )}
                   </Field>
                 </Grid>
               </Grid>
 
-              <Divider sx={{ my: 4 }} />
-
-              <Alert severity="warning" icon={<WarningAmber />}>
-                Are you sure you want to create a new AMC contract and activate{" "}
-                <b>{amcData.machinesWaiting}</b> waiting machines?
+              <Alert severity="warning" icon={<WarningAmber />} sx={{ mt: 4 }}>
+                Renewing AMC will:
+                <ul style={{ marginTop: 8, marginBottom: 0 }}>
+                  <li>Expire the previous AMC contract.</li>
+                  <li>Create a new AMC contract.</li>
+                  <li>
+                    Activate all AMC Expired devices under the new contract.
+                  </li>
+                </ul>
               </Alert>
 
               <Box display="flex" justifyContent="flex-end" gap={2} mt={4}>
