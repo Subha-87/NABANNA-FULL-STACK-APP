@@ -544,47 +544,48 @@ const getRenewalData = async (req, res) => {
 };
 
 const renewAMCData = async (req, res) => {
-  //const session = await mongoose.startSession();
-  console.log(req.body);
-
   try {
-    //session.startTransaction();
+    const { agencyName, workOrderNo, contractNo, startDate, remarks } =
+      req.body;
 
-    const { contractName, vendor, contractNo, startDate, remarks } = req.body;
-
-    if (!vendor || !contractNo || !startDate) {
-      //await session.abortTransaction();
-
+    if (!agencyName || !workOrderNo || !contractNo || !startDate) {
       return sendError(res, 400, "All fields are required");
     }
 
+    // Find current active contract
+    const previousContract = await amcCollection.findOne({
+      status: "ACTIVE",
+    });
+
+    if (!previousContract) {
+      return sendError(res, 404, "No Active AMC Contract Found");
+    }
+
     // Expire previous contract
-    await amcCollection.updateMany({ status: "ACTIVE" }, { status: "EXPIRED" });
+    previousContract.status = "EXPIRED";
+    await previousContract.save();
 
     // Create new contract
-    const contract = await amcCollection.create({
-      contractName,
-      agencyName: vendor,
+    const newContract = await amcCollection.create({
+      contractName: "Nabanna Hardware AMC",
+      agencyName,
+      workOrderNo,
       contractNo,
       startDate: new Date(startDate),
       durationYears: 1,
+      coveredDevices: 0,
       status: "ACTIVE",
       remarks,
     });
 
-    const contractId = contract._id;
+    // Next step:
+    // const activated = await renewAMCForMachines(newContract._id);
+    // newContract.coveredDevices = activated;
+    // await newContract.save();
 
-    // Activate all eligible machines
-    //await activateAMCForMachines(contractId);
-
-    //await session.commitTransaction();
-
-    return sendSuccess(res, 200, "AMC Renewed Successfully", contract);
+    return sendSuccess(res, 200, "AMC Renewed Successfully", newContract);
   } catch (error) {
-    //await session.abortTransaction();
-
     console.error(error);
-
     return sendError(res, 500, "Internal Server Error");
   }
 };

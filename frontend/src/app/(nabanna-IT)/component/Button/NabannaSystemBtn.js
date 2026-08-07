@@ -546,7 +546,7 @@ export const RenewalAMCBtn = () => {
   // In Modal Renew amc button clicked //
   const amcRenewal = async (renewData) => {
     // api post call for submit renewData//
-    /*try {
+    try {
       const resp = await axios.put(
         "/nabannaSystem/activate-renewal",
         renewData,
@@ -555,7 +555,7 @@ export const RenewalAMCBtn = () => {
     } catch (error) {
       const errMSG = error.response.data.message;
       console.error(errMSG);
-    }*/
+    }
     //setOpen(false); // modal close
   };
   return (
