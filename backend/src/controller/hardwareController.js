@@ -200,7 +200,7 @@ const editSystemStatus = async (req, resp) => {
       floor,
       office,
       roomNo,
-      amcStatus,
+
       systemCondition,
       remarks,
     } = req.body;
@@ -213,7 +213,7 @@ const editSystemStatus = async (req, resp) => {
         floor,
         office,
         roomNo,
-        amcStatus,
+
         systemCondition,
         remarks,
       },

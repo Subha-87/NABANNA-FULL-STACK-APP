@@ -42,8 +42,8 @@ const EditMachine = ({ editData, modStat, refreshData }) => {
       remarks,
       _id,
     } = values;
-
-    try {
+    console.log(values);
+    /* try {
       const response = await axios.patch(`/NabannaSystem/update/${_id}`, {
         department,
         designation,
@@ -64,7 +64,7 @@ const EditMachine = ({ editData, modStat, refreshData }) => {
       toast.error(generalError || "Something Went Wrong");
     } finally {
       setSubmitting(false);
-    }
+    }*/
   };
 
   // Style for read-only fields to look like clean data cards
@@ -136,6 +136,7 @@ const EditMachine = ({ editData, modStat, refreshData }) => {
             }}
           >
             {/* USER DETAILS SECTION (Read-Only) */}
+            {/* USER DETAILS SECTION */}
             <Box
               sx={{
                 display: "grid",
@@ -148,121 +149,106 @@ const EditMachine = ({ editData, modStat, refreshData }) => {
                 border: "1px solid #e2e8f0",
               }}
             >
-              <TextField
-                label="Employee Name"
-                value={values.employeeName}
-                disabled
-                size="small"
-                sx={readOnlySx}
-                InputProps={{
-                  startAdornment: (
-                    <PersonOutlineIcon
-                      sx={{ mr: 1, color: "#94a3b8", fontSize: 18 }}
-                    />
-                  ),
-                }}
-              />
-              <TextField
-                label="Designation"
-                value={values.designation}
-                disabled
-                size="small"
-                sx={readOnlySx}
-              />
-              <TextField
-                label="Department"
-                value={values.department}
-                disabled
-                size="small"
-                sx={readOnlySx}
-              />
-              <TextField
-                label="Office / Room"
-                value={`${values.office} - ${values.roomNo}`}
-                disabled
-                size="small"
-                sx={readOnlySx}
-                InputProps={{
-                  startAdornment: (
-                    <DomainIcon
-                      sx={{ mr: 1, color: "#94a3b8", fontSize: 18 }}
-                    />
-                  ),
-                }}
-              />
-              <TextField
-                label="Floor"
-                value={values.floor}
-                disabled
-                size="small"
-                sx={readOnlySx}
-              />
-            </Box>
-
-            {/* AMC SECTION (Conditional) */}
-            {(getDerivedAmcStatus(values) === "REQUIRED" ||
-              getDerivedAmcStatus(values) === "ON") && (
-              <Box
-                sx={{
-                  mb: 3,
-                  p: 2,
-                  borderRadius: "12px",
-                  border: "1px solid",
-                  borderColor:
-                    values.amcStatus === "ON" ? "#bbf7d0" : "#fecaca",
-                  backgroundColor:
-                    values.amcStatus === "ON" ? "#f0fdf4" : "#fef2f2",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Box>
-                  <Typography
-                    sx={{ fontWeight: 700, color: "#991b1b", fontSize: "15px" }}
-                  >
-                    AMC Status
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: "#64748b" }}>
-                    {getDerivedAmcStatus(values) === "ON"
-                      ? "AMC is currently active."
-                      : "Warranty expired. AMC activation is required."}
-                  </Typography>
-                </Box>
-                <FormGroup>
-                  <FormControlLabel
-                    label={values.amcStatus === "ON" ? "Active" : "Activate"}
-                    labelPlacement="start"
-                    control={
-                      <Switch
-                        checked={values.amcStatus === "ON"}
-                        disabled={getDerivedAmcStatus(values) === "ON"}
-                        onChange={(e) =>
-                          setFieldValue(
-                            "amcStatus",
-                            e.target.checked ? "ON" : "NONE",
-                          )
-                        }
-                        sx={{
-                          "& .MuiSwitch-switchBase.Mui-checked": {
-                            color: "#16a34a",
-                          },
-                          "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
-                            {
-                              backgroundColor: "#22c55e",
-                            },
-                          "& .MuiSwitch-track": { backgroundColor: "#dc2626" },
-                        }}
-                      />
-                    }
-                    sx={{
-                      m: 0,
-                      "& .MuiFormControlLabel-label": { fontWeight: 600 },
+              {/* Employee Name */}
+              <Field name="employeeName">
+                {({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Employee Name"
+                    size="small"
+                    sx={readOnlySx}
+                    InputProps={{
+                      startAdornment: (
+                        <PersonOutlineIcon
+                          sx={{
+                            mr: 1,
+                            color: "#94a3b8",
+                            fontSize: 18,
+                          }}
+                        />
+                      ),
                     }}
                   />
-                </FormGroup>
-              </Box>
-            )}
+                )}
+              </Field>
+
+              {/* Designation */}
+              <Field name="designation">
+                {({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Designation"
+                    size="small"
+                    sx={readOnlySx}
+                  />
+                )}
+              </Field>
+
+              {/* Department */}
+              <Field name="department">
+                {({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Department"
+                    size="small"
+                    sx={readOnlySx}
+                  />
+                )}
+              </Field>
+
+              {/* Office */}
+              <Field name="office">
+                {({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Office"
+                    size="small"
+                    sx={readOnlySx}
+                    InputProps={{
+                      startAdornment: (
+                        <DomainIcon
+                          sx={{
+                            mr: 1,
+                            color: "#94a3b8",
+                            fontSize: 18,
+                          }}
+                        />
+                      ),
+                    }}
+                  />
+                )}
+              </Field>
+
+              {/* Room */}
+              <Field name="roomNo">
+                {({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Room No."
+                    size="small"
+                    sx={readOnlySx}
+                  />
+                )}
+              </Field>
+
+              {/* Floor */}
+              <Field name="floor">
+                {({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Floor"
+                    size="small"
+                    sx={readOnlySx}
+                  />
+                )}
+              </Field>
+            </Box>
 
             {/* SYSTEM CONDITION (Radio Buttons) */}
             <Box sx={{ mb: 3 }}>
