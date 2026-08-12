@@ -23,10 +23,11 @@ import {
 } from "@mui/icons-material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
+import { useState } from "react";
 
 export const RenewalCard = ({ onClose, onRenew, amcDetails }) => {
+  //console.log(amcDetails)
   const { previousContract, suggestedStartDate, suggestedEndDate } = amcDetails;
-  //console.log(previousContract)
   const minimumDate = suggestedStartDate.split("T")[0];
   const calculateEndDate = (startDate) => {
     //console.log(startDate)
@@ -62,9 +63,14 @@ export const RenewalCard = ({ onClose, onRenew, amcDetails }) => {
 
   return (
     <Card
-      elevation={0}
       sx={{
-        width: 760,
+        width: { xs: "95vw", sm: 760 },
+        maxWidth: 760,
+        height: { xs: "90vh", sm: 700 },
+        maxHeight: "90vh",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
         borderRadius: 3,
       }}
     >
@@ -74,6 +80,7 @@ export const RenewalCard = ({ onClose, onRenew, amcDetails }) => {
           bgcolor: "#1565c0",
           color: "#fff",
           p: 2.5,
+          flexShrink: 0,
         }}
       >
         <Box display="flex" gap={2} alignItems="center">
@@ -91,7 +98,14 @@ export const RenewalCard = ({ onClose, onRenew, amcDetails }) => {
         </Box>
       </Box>
 
-      <CardContent sx={{ p: 4 }}>
+      <CardContent
+        sx={{
+          p: 4,
+          flex: "1 1 0%",
+          minHeight: 0,
+          overflowY: "auto",
+        }}
+      >
         {/* Previous Contract */}
         <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>
           Previous AMC Contract
@@ -183,7 +197,7 @@ export const RenewalCard = ({ onClose, onRenew, amcDetails }) => {
                 </Box>
               </Grid>
 
-              <Grid item xs={3}>
+              {/*<Grid item xs={3}>
                 <Typography variant="caption" color="text.secondary">
                   Status
                 </Typography>
@@ -197,7 +211,7 @@ export const RenewalCard = ({ onClose, onRenew, amcDetails }) => {
                     size="small"
                   />
                 </Box>
-              </Grid>
+              </Grid>*/}
             </Grid>
           </CardContent>
         </Card>
@@ -216,7 +230,7 @@ export const RenewalCard = ({ onClose, onRenew, amcDetails }) => {
           validationSchema={renewalValidationSchema}
           onSubmit={(values) => onRenew(values)}
         >
-          {({values}) => (
+          {({ values }) => (
             <Form>
               <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>
                 New AMC Contract
@@ -318,7 +332,19 @@ export const RenewalCard = ({ onClose, onRenew, amcDetails }) => {
                 </ul>
               </Alert>
 
-              <Box display="flex" justifyContent="flex-end" gap={2} mt={4}>
+              {/* FIXED FOOTER */}
+              <Box
+                sx={{
+                  flexShrink: 0,
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 2,
+                  px: 4,
+                  py: 2.5,
+                  borderTop: "1px solid #e2e8f0",
+                  backgroundColor: "#fff",
+                }}
+              >
                 <Button variant="outlined" color="inherit" onClick={onClose}>
                   Cancel
                 </Button>

@@ -44,7 +44,7 @@ const UserDetails = () => {
         <SystemStatusView />
         <SystemFind />
         <SearchSystem />
-        <ActivateAMCBtn/>
+        <ActivateAMCBtn onActive={getHardwareData}/>
         <RenewalAMCBtn/>
         <AmcExport />
       </div>

@@ -43,7 +43,7 @@ const EditMachine = ({ editData, modStat, refreshData }) => {
       _id,
     } = values;
     console.log(values);
-    /* try {
+     try {
       const response = await axios.patch(`/NabannaSystem/update/${_id}`, {
         department,
         designation,
@@ -64,7 +64,7 @@ const EditMachine = ({ editData, modStat, refreshData }) => {
       toast.error(generalError || "Something Went Wrong");
     } finally {
       setSubmitting(false);
-    }*/
+    }
   };
 
   // Style for read-only fields to look like clean data cards

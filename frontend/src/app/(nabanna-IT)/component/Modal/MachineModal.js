@@ -163,6 +163,7 @@ export const StatusModal = ({ isModalOpen, isModalClose }) => {
     setError(null);
     try {
       const resp = await axios.get("/NabannaSystem");
+      console.log(resp.data)
       setData(resp.data.data);
     } catch (error) {
       const { generalError } = handleAxiosError(error);

@@ -477,7 +477,7 @@ export const DeleteSystemBtn = ({ del_id, refreshData }) => {
 };
 
 // Activate AMC Button //
-export const ActivateAMCBtn = () => {
+export const ActivateAMCBtn = ({onActive}) => {
   const [open, setOpen] = useState(false);
   const [currentAMCData, setCurrentAMCData] = useState(null);
   const axios = useAxios();
@@ -502,11 +502,14 @@ export const ActivateAMCBtn = () => {
   const activateAmc = async () => {
     try {
       const resp = await axios.put("/nabannaSystem/activate-amc");
-      console.log(resp);
-      const successMSG = resp.data.message;
+      //console.log(resp);
+      const successMSG = resp.data.message || "Machine AMC is Acitvated";
+      onActive() // after success data is updated //
       toast.success(successMSG);
     } catch (error) {
-      console.error(error);
+      //console.error(error);
+      const errMSg = error?.response?.data.message || "Somtheing Wrong"
+      toast.error(errMSg)
     }
     setOpen(false); // modal close
   };
