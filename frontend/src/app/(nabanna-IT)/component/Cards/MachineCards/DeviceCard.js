@@ -8,8 +8,8 @@ import {
 } from "@mui/material";
 
 const DeviceCard = ({ title, icon, device, highlight = false }) => {
-
   if (!device) return null;
+  console.log(device);
 
   // CPU serial can be array
   const serial = Array.isArray(device.serial)
@@ -17,19 +17,33 @@ const DeviceCard = ({ title, icon, device, highlight = false }) => {
     : device.serial;
 
   // Warranty / AMC Status
-  const status = device.remainingWarranty;
+  const warrantyStatus = device.remainingWarranty;
+  const amcStatus = device.amcStatus;
+  console.log(device.installationDate);
 
-  let chipColor = "success";
+  // -------------------------
+  // AMC CHIP COLOR
+  // -------------------------
+  const getAmcChipColor = (status) => {
+    switch (status) {
+      case "ON":
+        return "success";
 
-  if (
-    status === "Expired" ||
-    status === "AMC Expired" ||
-    status === "AMC Required"
-  ) {
-    chipColor = "error";
-  } else if (status !== "Expired" && status !== "AMC Expired") {
-    chipColor = "success";
-  }
+      case "REQUIRED":
+      case "EXPIRED":
+        return "error";
+
+      case "NONE":
+      default:
+        return "default";
+    }
+  };
+
+  // -------------------------
+  // WARRANTY COLOR
+  // -------------------------
+  const warrantyColor =
+    warrantyStatus && warrantyStatus !== "Expired" ? "success" : "error";
 
   return (
     <Card
@@ -117,29 +131,53 @@ const DeviceCard = ({ title, icon, device, highlight = false }) => {
           </Typography>
         )}
 
-        <Typography
-          sx={{
-            mb: 1,
-            fontSize: 15,
-          }}
-        >
-          <b>Warranty :</b>
-        </Typography>
+        {/* ========================= */}
+        {/* WARRANTY DEVICE */}
+        {/* ========================= */}
 
-        <Chip
-          label={status}
-          color={chipColor}
-          size="small"
-          sx={{
-            mt: 1,
-            fontWeight: 700,
-          }}
-        />
-
-        {device.installationDate && (
-          <Typography variant="body2" sx={{ mt: 2 }}>
-            <b>Installed :</b>{" "}
-            {new Date(device.installationDate).toLocaleDateString()}
+        {device.installationDate ? (
+          <>
+            <Typography
+              sx={{
+                mb: 1,
+                fontSize: 15,
+              }}
+            >
+              <b>Warranty :</b>
+              <Chip
+                label={device.remainingWarranty}
+                color={warrantyColor}
+                size="small"
+                sx={{
+                  ml: 0.5,
+                  fontWeight: 700,
+                }}
+              />
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 2 }}>
+              <b>Installed :</b>{" "}
+              {new Date(device.installationDate).toLocaleDateString()}
+            </Typography>
+          </>
+        ) : (
+          /* ========================= */
+          /* AMC DEVICE */
+          /* ========================= */
+          <Typography
+            sx={{
+              mb: 1,
+              fontSize: 15,
+            }}
+          >
+            <b>AMC Status :</b>
+            <Chip
+              label={amcStatus || "NONE"}
+              color={getAmcChipColor(amcStatus)}
+              size="small"
+              sx={{
+                fontWeight: 700,
+              }}
+            />
           </Typography>
         )}
       </CardContent>

@@ -164,24 +164,22 @@ const createHardwareSetup = async (req, res) => {
 // Search Nabanna System Based on User Details //
 const searchData = async (req, resp) => {
   //console.log("Requestin..")
-  const { search_system } = req.params;
+  const { search_user } = req.params;
+  const employee = search_user?.trim();
+  console.log(employee)
   const filter = {
     $or: [
-      { department: { $regex: search_system, $options: "i" } },
-      { employeeName: { $regex: search_system, $options: "i" } },
-      { designation: { $regex: search_system, $options: "i" } },
-      { roomNo: { $regex: search_system, $options: "i" } },
-      { floor: { $regex: search_system, $options: "i" } },
-      { room: { $regex: search_system, $options: "i" } },
-      { office: { $regex: search_system, $options: "i" } },
-      { supplier: { $regex: search_system, $options: "i" } },
+      
+      { employeeName: { $regex: employee, $options: "i" } },
+      
     ],
   };
   try {
     const searchResult = await hardwareCollection
       .find(filter)
       .sort({ _id: -1 });
-    if (!searchResult.length) return sendError(resp, 404, "No Systems Found");
+      //console.log(searchResult.length)
+    if (!searchResult ||searchResult.length === 0) return sendError(resp, 404, "No Systems Found");
     return sendSuccess(resp, 200, "System Found in Our System", searchResult);
   } catch (error) {
     return sendError(resp, 500, "Internal Server Error");
@@ -255,40 +253,35 @@ const exportAmcSystems = async (req, resp) => {
   }
 };
 
-// ** FIND Single NABANNA SYSTEM BASED ON SERIAL **//
+// ** FIND Single NABANNA SYSTEM BASED ON SERIAL NUMBER **//
 const searchHardware = async (req, res) => {
+  //console.log(req.query);
   try {
-    // Get the System (ALL-in-One,CPU/MONITOR,PRINTER,LAPTOP etc) & respictive value(Serial/Model or Make)
+    // Get the System (ALL-in-One,CPU/MONITOR,PRINTER,LAPTOP etc) & respictive value(Serial)
     //console.log(req.query)
     const { system, value } = req.query;
+    const cleanValue = value?.trim(); // items serial number //
 
-    if (!system || !value)
+    if (!system || !cleanValue)
       return sendError(res, 400, "System and Search value required");
 
     const sys = system.toUpperCase();
 
     const result = await hardwareCollection.findOne({
       $or: [
-        { [`systems.${sys}.serial`]: value }, // string match
-        { [`systems.${sys}.serial`]: { $elemMatch: { $eq: value } } }, // array match
+        { [`systems.${sys}.serial`]: cleanValue }, // string match
+        { [`systems.${sys}.serial`]: { $elemMatch: { $eq: cleanValue } } }, // array match
       ],
-      /*$or: [
-        //{ [`systems.${sys}.serial`]: { $regex: value, $options: "i" } }, //search serial numbers, using $regex is slower.
-        //{ [`systems.${sys}.serial`]: value },
-        
-        //{ [`systems.${sys}.model`]: { $regex: value, $options: "i" } },
-        //{ [`systems.${sys}.make`]: { $regex: value, $options: "i" } },
-      ],*/
     });
     //console.log(!!result.length)
-    //console.log(result)
+    console.log(result);
     if (!result) return sendError(res, 404, "No Such Machine Found in Nabanna");
     //return sendSuccess(res, 200, "System Found", result);
     return res.status(200).json({
       success: true,
       message: "System Found",
       matchedDevice: sys,
-      matchedValue: value,
+      matchedValue: cleanValue,
       data: result,
     });
   } catch (err) {

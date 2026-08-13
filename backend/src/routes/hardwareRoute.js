@@ -23,7 +23,7 @@ const {
 // THIS IS USER-MACHINE-DETAILS ROUTES//
 router.get("/", verifyToken, getAllData);
 router.post("/", verifyToken, createHardwareSetup);
-router.get("/search/:search_system", verifyToken, searchData);
+router.get("/search/:search_user", verifyToken, searchData);
 router.patch("/update/:edit_id", verifyToken, editSystemStatus);
 router.delete("/deleteSystem/:del_id", verifyToken, deleteHardwareSystem);
 router.get("/export-amc", verifyToken, exportAmcSystems);
