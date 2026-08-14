@@ -22,11 +22,12 @@ import ScannerIcon from "@mui/icons-material/Scanner";
 import DeviceCard from "./DeviceCard";
 
 const MachineInfoCard = ({ searchResult }) => {
-  //console.log(data)
-  const { data, matchedDevice, matchedValue } = searchResult;
-  console.log(data);
-  console.log(matchedDevice);
-  console.log(matchedValue);
+  
+  //console.log(searchResult)
+  const { data, matchedDevice} = searchResult;
+  //console.log(data);
+  //console.log(matchedDevice);
+  //console.log(matchedValue);
   if (!data) return null;
 
   return (
@@ -191,7 +192,7 @@ const MachineInfoCard = ({ searchResult }) => {
         )}
 
         {data.systems.PRINTER?.map((printer, i) => (
-          <Grid item xs={12} md={6} key={i}>
+          <Grid item xs={12} md={6} key={printer.serial || i}>
             <DeviceCard
               title={`Printer ${i + 1}`}
               device={printer}
@@ -202,7 +203,7 @@ const MachineInfoCard = ({ searchResult }) => {
         ))}
 
         {data.systems.SCANNER?.map((scanner, i) => (
-          <Grid item xs={12} md={6} key={i}>
+          <Grid item xs={12} md={6} key={scanner.serial || i}>
             <DeviceCard
               title={`📠 Scanner ${i + 1}`}
               device={scanner}

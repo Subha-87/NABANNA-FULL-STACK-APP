@@ -9,7 +9,7 @@ import {
 
 const DeviceCard = ({ title, icon, device, highlight = false }) => {
   if (!device) return null;
-  console.log(device);
+  //console.log(device);
 
   // CPU serial can be array
   const serial = Array.isArray(device.serial)
@@ -19,7 +19,7 @@ const DeviceCard = ({ title, icon, device, highlight = false }) => {
   // Warranty / AMC Status
   const warrantyStatus = device.remainingWarranty;
   const amcStatus = device.amcStatus;
-  console.log(device.installationDate);
+  //console.log(device.installationDate);
 
   // -------------------------
   // AMC CHIP COLOR

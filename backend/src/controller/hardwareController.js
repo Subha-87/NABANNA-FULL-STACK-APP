@@ -161,7 +161,7 @@ const createHardwareSetup = async (req, res) => {
   }
 };
 
-// Search Nabanna System Based on User Details //
+// Search Nabanna System Based on User Name //
 const searchData = async (req, resp) => {
   //console.log("Requestin..")
   const { search_user } = req.params;
@@ -176,11 +176,17 @@ const searchData = async (req, resp) => {
   };
   try {
     const searchResult = await hardwareCollection
-      .find(filter)
+      .findOne(filter)             // find()--> return multiple document as array , findOne() -> return single doucment //
       .sort({ _id: -1 });
-      //console.log(searchResult.length)
-    if (!searchResult ||searchResult.length === 0) return sendError(resp, 404, "No Systems Found");
-    return sendSuccess(resp, 200, "System Found in Our System", searchResult);
+    //console.log(searchResult)
+    if (!searchResult) return sendError(resp, 404, "No Systems Found");
+   return resp.status(200).json({
+      success: true,
+      message: "System Found",
+      matchedDevice: null,
+      matchedValue: employee,
+      data: searchResult,
+    });
   } catch (error) {
     return sendError(resp, 500, "Internal Server Error");
   }
@@ -267,14 +273,14 @@ const searchHardware = async (req, res) => {
 
     const sys = system.toUpperCase();
 
-    const result = await hardwareCollection.findOne({
+    const result = await hardwareCollection.findOne({ // use findOne() --> as search result need only one document//
       $or: [
         { [`systems.${sys}.serial`]: cleanValue }, // string match
         { [`systems.${sys}.serial`]: { $elemMatch: { $eq: cleanValue } } }, // array match
       ],
     });
     //console.log(!!result.length)
-    console.log(result);
+    //console.log(result);
     if (!result) return sendError(res, 404, "No Such Machine Found in Nabanna");
     //return sendSuccess(res, 200, "System Found", result);
     return res.status(200).json({

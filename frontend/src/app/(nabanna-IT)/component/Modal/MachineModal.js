@@ -44,12 +44,13 @@ export const AddMachineModal = ({ isModalOpen, isModalClose, onSuccess }) => {
   );
 };
 
+// THIS MODAL OPEN FOR BOTH SEPARATE USER DETAILS & SYSTEM SERIAL FOUND //
 export const MachineFilterModal = ({
   isModalOpen,
   isModalClose,
   searchData,
 }) => {
-  //console.log(searchData) // search data == serail/make/model but search data != username /dept no passing as props to machine table//
+  //console.log(searchData) 
   const modalStyleMachine = {
     position: "absolute",
 

@@ -55,7 +55,7 @@ export const AddSystemBtn = ({ onSuccess }) => {
   );
 };
 
-// Search System Based on User Detials //
+// Search System Based on User Name //
 export const SearchSystem = () => {
   const axios = useAxios();
   const [open, setopen] = useState(false);
@@ -69,10 +69,13 @@ export const SearchSystem = () => {
       const response = await axios.get(
         `/NabannaSystem/search/${userSerachInput}`,
       );
-      //console.log(response);
+      console.log(response);
       //2) Set Response data for passing Machine table//
       toast.success(response.data?.message || "System Found");
-      setFilterData(response.data.data);
+      setFilterData({
+        data: response.data.data,
+        matchedDevice: response.data.matchedDevice,
+      });
 
       // 3) Open Modal When Result is Found//
       setopen(true);
@@ -88,14 +91,14 @@ export const SearchSystem = () => {
       <TextField
         type="search"
         value={userSerachInput}
-        placeholder="Dept/Emp/Rank/Supplier/Floor/Room"
+        placeholder="Enter Employee Name"
         className="border-1 border-black rounded"
         onChange={(e) => setUserSerachInput(e.target.value)}
         sx={{
           "& .MuiInputBase-root": {
             height: 40, // Set your desired height
             marginRight: 1,
-            width: 300,
+            width: 210,
           },
           // Target the input text color
           "& .MuiInputBase-input": { color: "darkblue" },
@@ -112,7 +115,7 @@ export const SearchSystem = () => {
         onClick={hanldeSystemSearch}
         sx={{ marginLeft: 2 }}
       >
-        Search
+        System
       </Button>
       <MachineFilterModal
         isModalOpen={open}
@@ -245,7 +248,7 @@ export const SystemFind = () => {
       const success_msg = resp.data.message;
       toast.success(success_msg);
       const filter_result = resp.data?.data || [];
-      console.log(filter_result);
+      //console.log(filter_result);
       setOpen(true);
       setSerachResult(filter_result);
       setMatchedDevice(resp.data.matchedDevice);
@@ -477,7 +480,7 @@ export const DeleteSystemBtn = ({ del_id, refreshData }) => {
 };
 
 // Activate AMC Button //
-export const ActivateAMCBtn = ({onActive}) => {
+export const ActivateAMCBtn = ({ onActive }) => {
   const [open, setOpen] = useState(false);
   const [currentAMCData, setCurrentAMCData] = useState(null);
   const axios = useAxios();
@@ -504,12 +507,12 @@ export const ActivateAMCBtn = ({onActive}) => {
       const resp = await axios.put("/nabannaSystem/activate-amc");
       //console.log(resp);
       const successMSG = resp.data.message || "Machine AMC is Acitvated";
-      onActive() // after success data is updated //
+      onActive(); // after success data is updated //
       toast.success(successMSG);
     } catch (error) {
       //console.error(error);
-      const errMSg = error?.response?.data.message || "Somtheing Wrong"
-      toast.error(errMSg)
+      const errMSg = error?.response?.data.message || "Somtheing Wrong";
+      toast.error(errMSg);
     }
     setOpen(false); // modal close
   };
