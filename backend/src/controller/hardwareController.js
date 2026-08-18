@@ -5,6 +5,7 @@ const amcModel = require("../models/amcMaster");
 const systemRepairCollection = require("../models/repairModel");
 const { sendSuccess, sendError } = require("../utils/apiResponse");
 const { activateAMCForMachines } = require("../services/amcService");
+const {dashboardService} = require ("../services/SystemHardware.service")
 
 // Get All Nabanna System Details in warranty/AMC of User Hardware Set Up //
 
@@ -589,6 +590,17 @@ const renewAMCData = async (req, res) => {
   }
 };
 
+const getDashboardSummary = async(req,resp) => {
+  try {
+    const result = await dashboardService()
+    if(!result) return sendError(resp,404,"System Not Found")
+    return sendSuccess(resp,200,"System Found",result)  
+  } catch (error) {
+    console.error(error);
+    return sendError(resp, 500, "Internal Server Error");
+  }
+}
+
 module.exports = {
   getAllData,
   createHardwareSetup,
@@ -605,4 +617,5 @@ module.exports = {
   activateAMC,
   getRenewalData,
   renewAMCData,
+  getDashboardSummary
 };

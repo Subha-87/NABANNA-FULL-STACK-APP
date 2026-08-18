@@ -17,7 +17,8 @@ const {
   getAMCData,
   activateAMC,
   getRenewalData,
-  renewAMCData
+  renewAMCData,
+  getDashboardSummary
 } = require("../controller/hardwareController");
 
 // THIS IS USER-MACHINE-DETAILS ROUTES//
@@ -32,6 +33,7 @@ router.get("/amc-detail", verifyToken, getAMCData);
 router.put("/activate-amc",verifyToken,activateAMC)
 router.get("/renewal-details",verifyToken,getRenewalData)
 router.put("/activate-renewal",verifyToken,renewAMCData)
+router.get("/dashboard-summary",verifyToken,getDashboardSummary)
 
 // THIS IS MACHINE REPAIR ROUTES //
 router.post("/repair", verifyToken, postRepairData);

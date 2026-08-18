@@ -5,7 +5,7 @@ import {
   AddSystemBtn,
   SearchSystem,
   AmcExport,
-  SystemStatusView,
+ 
   SystemFind,ActivateAMCBtn,RenewalAMCBtn
 } from "../../component/Button/NabannaSystemBtn";
 import { handleAxiosError} from "@/app/utils/axiosError";
@@ -41,7 +41,7 @@ const UserDetails = () => {
         style={{ backgroundColor: "#FEF3E2" }}
       >
         <AddSystemBtn onSuccess={getHardwareData} />
-        <SystemStatusView />
+        
         <SystemFind />
         <SearchSystem />
         <ActivateAMCBtn onActive={getHardwareData}/>
