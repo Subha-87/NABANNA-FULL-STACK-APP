@@ -45,10 +45,11 @@ const ItemReg = () => {
           <label className="mr-2 font-bold text-xl">Search :</label>
           <input
             type="text"
-            placeholder="ITEM/Sender/Serial/Room/Allocation"
+            placeholder="Challan/ITEM/Sender/Serial/Room/Allocation"
             value={searchItem}
             className="searchInput"
             onChange={(e) => setsearchItem(e.target.value)}
+            style={{width:"350px"}}
           />{" "}
           <ItemSearchBtn searchData={searchItem} clearData={makeClear} />
         </div>

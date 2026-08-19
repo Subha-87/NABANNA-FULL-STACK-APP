@@ -667,17 +667,13 @@ export const EditNabannaEstimateForm = ({ editData, modStat, onRefresh }) => {
         status,
         remarks,
       });
-      SweetSwal.fire({
-        position: "top-end",
-        icon: "success",
-        title: response.data.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      toast.success(response.data?.message || "Edit Successfull");
+
       onRefresh();
       resetForm();
       modStat();
     } catch (error) {
+      console.error(error);
       toast.error("Something Went Wrong");
     } finally {
       setSubmitting(false);

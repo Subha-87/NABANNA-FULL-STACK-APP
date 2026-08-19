@@ -66,8 +66,8 @@ const updateItemData = async (req, resp) => {
 
 // SEARCH PARTICULA HARDWARE ITEM //
 const getSearchItemData = async (req, resp) => {
-  const searchValue = req.params.searchKey;
-  //console.log(searchValue)
+  const searchValue = req.query.searchKey?.trim()
+  console.log(searchValue)
   try {
     const searchResult = await itItemCollection
       .find({
@@ -77,6 +77,7 @@ const getSearchItemData = async (req, resp) => {
           { "itItems.model": { $regex: searchValue, $options: "i" } },
           { "itItems.make": { $regex: searchValue, $options: "i" } },
           { sender: { $regex: searchValue, $options: "i" } },
+          { challan: { $regex: searchValue, $options: "i" } },
           { room: { $regex: searchValue, $options: "i" } },
           { allocation: { $regex: searchValue, $options: "i" } },
         ],

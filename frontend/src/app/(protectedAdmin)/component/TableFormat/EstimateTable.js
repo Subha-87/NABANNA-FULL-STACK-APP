@@ -5,6 +5,7 @@ import "./TableStyle.css";
 import {
   EditNabannaEstimate,
   ViewChallan,
+  DeleteEstimate
 } from "../ActionButton/EditEstimateBtn";
 import { ImUpload } from "react-icons/im";
 import { Button } from "@mui/material";
@@ -187,6 +188,7 @@ export const NabannaEstimateTable = () => {
                       onRefresh={getEstimateRecords}
                     />
                     <ViewChallan rowId={data._id} />
+                    <DeleteEstimate selectedRowId={data._id} onRefresh={getEstimateRecords} />
                   </div>
                 </td>
               </tr>
@@ -198,8 +200,9 @@ export const NabannaEstimateTable = () => {
   );
 };
 
-export const SearchEstmateNabannaTable = ({ searchResult, error }) => {
+export const SearchEstmateNabannaTable = ({ searchResult, error}) => {
   const [file, setFile] = useState(null);
+  const { getEstimateRecords } = useEstimate();
   const openInNewTab = (url) => {
     window.open(url, "_blank", "noreferrer");
   };
@@ -288,7 +291,8 @@ export const SearchEstmateNabannaTable = ({ searchResult, error }) => {
                 <td>{data.remarks}</td>
                 <td>
                   <div className="flex justify-content-center hover:cursor-pointer ">
-                    <EditNabannaEstimate rowData={data} />
+                    <EditNabannaEstimate rowData={data} onRefresh={getEstimateRecords}  />
+                    
                   </div>
                 </td>
               </tr>

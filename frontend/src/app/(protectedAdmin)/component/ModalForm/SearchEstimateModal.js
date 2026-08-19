@@ -7,7 +7,7 @@ const SearchEstimateModal = ({isOpen,isClose,searchData}) => {
     <Modal open ={isOpen} onClose={isClose}>
       <Box sx={modStyle}>
         <div className="text-xl text-center font-semibold font-sans text-blue-800">Search Result :</div>
-        <SearchEstmateNabannaTable searchResult={searchData}/>
+        <SearchEstmateNabannaTable searchResult={searchData} />
       </Box>
     </Modal>
   )

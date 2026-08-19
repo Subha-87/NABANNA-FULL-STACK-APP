@@ -17,7 +17,11 @@ const ItemSearchBtn = ({ searchData, clearData }) => {
     // filter result by api call //
 
     try {
-      const response = await axios.get(`/itemNabanna/search/${searchData}`);
+      const response = await axios.get("/itemNabanna/search",{
+        params:{
+          searchKey: searchData,
+        }
+      });
       //console.log(response);
       setResultData(response.data?.data);
       setresultModalOn(true);

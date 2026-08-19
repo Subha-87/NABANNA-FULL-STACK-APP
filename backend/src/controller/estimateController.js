@@ -197,6 +197,17 @@ const showChallanwithOrder = async (req, resp) => {
   }
 };
 
+const deleteEstimate = async (req, resp) => {
+  try {
+    const { del_id } = req.params;
+    const result = await estimateCollection.findByIdAndDelete(del_id);
+    if (!result) return sendError(resp, 404, "Cant Deleted Estimate");
+    return sendSuccess(resp, 200, "Estimate Deleted Successfully");
+  } catch (error) {
+    return sendError(resp, 500, "Internal Server Error");
+  }
+};
+
 module.exports = {
   postEstimateData,
   getEstimateData,
@@ -205,6 +216,7 @@ module.exports = {
   searchEstimate,
   uploadChallan,
   showChallanwithOrder,
+  deleteEstimate
 };
 
 /*

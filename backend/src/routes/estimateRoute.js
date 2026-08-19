@@ -16,6 +16,7 @@ const {
   searchEstimate,
   uploadChallan,
   showChallanwithOrder,
+  deleteEstimate
 } = require("../controller/estimateController");
 
 router.post(
@@ -41,4 +42,5 @@ router.patch(
   uploadChallan,
 );
 router.get("/view/:reqId", verifyToken, showChallanwithOrder);
+router.delete("/delete/:del_id",verifyToken,deleteEstimate)
 module.exports = router;

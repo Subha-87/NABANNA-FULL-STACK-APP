@@ -13,7 +13,7 @@ const {
 
 router.post("/incoming", verifyToken, postItItemsData);
 router.get("/showincoming", verifyToken, getItItemsData);
-router.get("/search/:searchKey", verifyToken, getSearchItemData);
+router.get("/search", verifyToken, getSearchItemData);
 router.put("/update/:editId", verifyToken, updateItemData);
 router.delete("/delete/:deleteId", verifyToken, deleteItemData);
 
