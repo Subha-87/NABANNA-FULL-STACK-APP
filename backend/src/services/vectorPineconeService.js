@@ -15,11 +15,11 @@ const pinecondeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
 const retrieveContext = async (userQuery) => {
   console.log("Context Retrieval Function Processing..")
   try {
-    const vectorIndex = await embeddUserQuery(userQuery); //2. get user query and send to embedd model //
+    const vectorIndex = await embeddUserQuery(userQuery); //2. get user query string format and send to embedd model //
     // Pass vector to pineconde database for semantic search //
     const searchResult = await pinecondeIndex.query({
       // pass the query vector index to pinecone semantic search//
-      vector: vectorIndex,
+      vector: vectorIndex, //Numeric data//
       topK: 3,
       includeMetadata: true,
     });
@@ -27,7 +27,7 @@ const retrieveContext = async (userQuery) => {
     const context = searchResult.matches
       .map((chunk) => chunk.metadata.text)
       .join("\n\n");
-    return context; // return matching relevant chunk text
+    return context; // return matching relevant chunk text (string)
   } catch (error) {
     console.error(error);
     return null;

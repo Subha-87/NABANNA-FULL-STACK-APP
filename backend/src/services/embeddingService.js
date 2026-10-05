@@ -6,7 +6,7 @@ dotenv.config();
 
 // Embedding model
 const embeddings = new OpenAIEmbeddings({
-  model: "text-embedding-3-small",
+  model: "text-embedding-3-small", //$5 invest //
   apiKey: process.env.OPENAI_API_KEY,
 });
 

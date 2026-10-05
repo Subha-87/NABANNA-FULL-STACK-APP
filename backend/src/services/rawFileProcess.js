@@ -16,6 +16,8 @@ console.log("fileName:", fileName);
 
 const fileIndexing = async () => {
   try {
+
+    // Phase 1 : RAW FILE --> CHUNK FILE
     const loader = new PDFLoader(filePath, { splitPages: false });
     //console.log(loader);
 
@@ -38,12 +40,12 @@ const fileIndexing = async () => {
     //console.log("State of Chunks Before Embedding: ", textsToEmbed);
     console.log(`Embedding ${textsToEmbed.length} chunks...`);
 
-    // Phase 2 -> Embedd The Chunk //
+    // Phase 2 ->CHUNK FILE--> NUMERIC VECTORS // Embedd The Chunk //
     const staticVector = await embeddCompanyData(textsToEmbed);// embedd model calling //
 
     //console.log("vector:",staticVector)
 
-    // Phase 3 - >Store the Chunk Vector Index to Pinecone Vector Database //
+    // Phase 3 - >Store the NUMERIC Vector Index to Pinecone Vector Database //
     await storeContext(validDocs, staticVector, fileName, filePath);
   } catch (error) {
     console.error(error);

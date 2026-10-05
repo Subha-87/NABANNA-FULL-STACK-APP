@@ -24,6 +24,8 @@ const setTopBoxRoutes = require("./routes/boxRoute")
 
 const cablelTvRoutes = require("./routes/catvRoute")
 
+const meetingRoutes = require("./routes/meetingRoute")
+
 const it_app = require("./app");
 //const connectDB = require('./config/database')
 //const connectDB = require('../../shared/database')
@@ -134,6 +136,8 @@ it_app.use("/AIagent/ai", aiRoutes);
 it_app.use("/publicMsg",messageRoutes)
 
 it_app.use("/nabanna",setTopBoxRoutes)
+
+it_app.use("/VIP",meetingRoutes)
 
 
 // TEST FOR BACKEND RUNNING OR NOT // TO TEST BACKEND  in Browser :http://127.0.0.1:5000

@@ -1,0 +1,209 @@
+/* Table Wrapper - Card-like appearance */
+.table-wrapper {
+  overflow-y: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08),
+              0 4px 8px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  border: 1px solid #e5e9f0;
+}
+
+/* Main Table */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #ffffff;
+  min-width: 900px;
+  table-layout: auto;
+}
+
+/* ==================== STICKY HEADER ==================== */
+.custom-table thead th {
+  font-weight: 700;
+  background: linear-gradient(180deg, #124170 0%, #0f3a65 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 14px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 3px solid #0a2c4f;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== TABLE BODY ==================== */
+.custom-table tbody td {
+  padding: 13px 12px;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid #f0f3f9;
+  color: #2c3e50;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+/* Remove default capitalize - better for API data (IDs, codes, emails, etc.) */
+.custom-table tbody td {
+  text-transform: none;
+}
+
+/* Zebra Stripes - Subtle & Professional */
+.custom-table tbody tr:nth-child(even) {
+  background-color: #f8fafd;
+}
+
+/* Hover Effect - Smooth & Modern */
+.custom-table tbody tr:hover:not(.new-row) {
+  background-color: #e8f0ff;;
+  
+  box-shadow: inset 0 0 0 2px #1e88e5,
+              0 4px 12px rgba(30, 136, 229, 0.25);
+  
+  z-index: 2;
+  position: relative;
+}
+/* Optional: Stronger left border for highlight */
+.custom-table tbody tr:hover td:first-child {
+  border-left: 3px solid #1e88e5;
+}
+
+/* Optional: First column left aligned (usually more readable) */
+.custom-table tbody td:first-child,
+.custom-table thead th:first-child {
+  text-align: left;
+  padding-left: 20px;
+}
+
+/* Optional: Last column right aligned (for actions) */
+.custom-table tbody td:last-child,
+.custom-table thead th:last-child {
+  text-align: center;
+}
+
+/* FOR NEW ROW AND BADGE STYLE ON TABLE */
+
+/* 🌟 Soft highlighted row (modern UI look) */
+.new-row {
+  background: linear-gradient(
+    90deg,
+    rgba(30, 136, 229, 0.08),
+    rgba(30, 136, 229, 0.03)
+  );
+  
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* subtle glowing border (not harsh) */
+.new-row td:first-child {
+  border-left: 4px solid #1e88e5;
+}
+
+/* soft glow effect */
+.new-row {
+  box-shadow: inset 0 0 0 1px rgba(30, 136, 229, 0.15),
+              0 2px 8px rgba(30, 136, 229, 0.08);
+}
+
+/* enhance on hover (feels interactive) */
+.custom-table tbody tr.new-row:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(30, 136, 229, 0.15),
+    rgba(30, 136, 229, 0.05)
+  );
+
+  box-shadow: inset 0 0 0 1px rgba(30, 136, 229, 0.25),
+              0 4px 14px rgba(30, 136, 229, 0.18);
+}
+@keyframes softGlow {
+  0% {
+    box-shadow: inset 0 0 0 1px rgba(30,136,229,0.12),
+                0 2px 6px rgba(30,136,229,0.06);
+  }
+  50% {
+    box-shadow: inset 0 0 0 1px rgba(30,136,229,0.25),
+                0 4px 12px rgba(30,136,229,0.15);
+  }
+  100% {
+    box-shadow: inset 0 0 0 1px rgba(30,136,229,0.12),
+                0 2px 6px rgba(30,136,229,0.06);
+  }
+}
+
+.new-row {
+  animation: softGlow 3s ease-in-out infinite;
+}
+
+
+/* text */
+.username-text {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #166534; /* green-800 */
+}
+
+
+.inline-badge {
+  margin-left: 8px;
+  background: #dc3545;
+  color: white;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite;
+}
+
+/* wrapper for proper positioning */
+.img-wrapper {
+  position: relative;
+  display: inline-block;
+}
+/* optional: smooth image look */
+.showImg {
+  display: block;
+  border-radius: 6px;
+}
+/* Highlight the entire cell */
+/* highlight cell (keep subtle) */
+.new-highlight {
+  background: rgba(220, 53, 69, 0.08) !important;
+  border-left: 4px solid #dc3545;
+}
+
+/* Badge styling */
+.new-badge {
+  position: absolute;
+  
+  top: 0;
+  right: 0;
+  border-bottom-left-radius: 6px;
+  border-top-right-radius: 6px;
+  
+  background-color: #dc3545 !important;
+  color: #fff !important;
+
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 6px;
+
+  border-radius: 4px;
+  z-index: 5; /* ensure it's above image */
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+
+  animation: pulse 1.5s infinite;
+}
+
+/* Subtle attention animation */
+/* animation */
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.75; }
+  100% { transform: scale(1); opacity: 1; }
+}

@@ -63,7 +63,7 @@ const TaskFormik = ({ rowTask, modalStat, onRefresh }) => {
     "Rittick Kumar Dey",
     "Debashis Halder",
     "Rajdeep Saha",
-    "Baladeb Mukherjee",
+   
     "Biplab Majumder",
   ];
 

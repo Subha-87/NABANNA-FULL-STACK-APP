@@ -56,6 +56,18 @@ const nextConfig = {
         protocol: "http",
         hostname: "10.10.119.160",
         port: "5000",
+        pathname: "uploads/images/Meetings/**",
+      },
+      {
+        protocol: "http",
+        hostname: "10.10.119.160",
+
+        pathname: "/api/uploads/images/Meetings/**",
+      },
+      {
+        protocol: "http",
+        hostname: "10.10.119.160",
+        port: "5000",
         pathname: "/**",
       },
     ],

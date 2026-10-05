@@ -13,6 +13,7 @@ import BuildIcon from "@mui/icons-material/Build";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import LocalPostOfficeIcon from '@mui/icons-material/LocalPostOffice';
+import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 
 export default function SideBar() {
   const pathname = usePathname();
@@ -24,6 +25,7 @@ export default function SideBar() {
       label: "Register",
       icon: AppRegistrationIcon,
     },
+    { href: "/dashboard/meeting", label: "VIP Meeting", icon: VideoCameraFrontIcon },
     { href: "/dashboard/estimate", label: "Estimate", icon: CalculateIcon },
     {
       href: "/dashboard/workorder",

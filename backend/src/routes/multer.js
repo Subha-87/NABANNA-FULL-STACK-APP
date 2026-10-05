@@ -1,10 +1,12 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs")
 
 // Handling Challan Img(single or multi) & Work Order Img(single) //
 //1) Set A File Directory where to save Img //
 const chln_Dir = path.join(process.cwd(), "public", "ChallanFolder");
 const workOrderDir = path.join(process.cwd(), "public", "WorkOrderFolder");
+
 
 //2) Set Storage //
 const chln_storage = multer.diskStorage({
@@ -105,12 +107,43 @@ const upload_letter = multer({
   fileFilter: filefilter,
 });
 
+// MEETING FILES UPLOAD//
+const meetingDir = path.join(process.cwd(),"uploads","images/Meetings")
+
+if(!fs.existsSync(meetingDir)){
+  fs.mkdirSync(meetingDir,{recursive:true})
+}
+
+const meetingStorage = multer.diskStorage({
+  destination:(req,file,cb) => {
+    cb(null,meetingDir) //  The folder where files will be saved
+  },
+  filename: (req,file,cb) => {
+    // 1. Get a random number suffix
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+     // 2. Extract the file extension (e.g., '.png')
+    const extension = path.extname(file.originalname)
+      // 3. Extract the base filename without extension
+    const baseName = path.basename(file.originalname, extension); 
+    // 4. Combine them safely
+    cb(null, baseName + '-' + uniqueSuffix + extension);
+  }
+})
+
+const letterUpload = multer({
+  storage:meetingStorage,
+  limits:{
+    fileSize:10*1024*1024
+  }
+})
+
 
 
 module.exports = {
   upload_challan_copy,
   upload_apprv_letter,
-  upload_letter
+  upload_letter,
+  letterUpload
 };
 
 /**

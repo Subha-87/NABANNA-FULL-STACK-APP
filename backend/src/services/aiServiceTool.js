@@ -35,6 +35,7 @@ async function webSearch({ query }) {
 }
 // MAIN FUNCTION NORMAL(1) //
 const getChatResponse = async (userMessage) => {
+  console.log(userMessage)
   const message = webBuildMessage(userMessage); // message coming from prompt building section //
 
   const RintuMsg = message;
@@ -254,7 +255,7 @@ const getChatSuperResponse = async (userMessage) => {
   }
 };
 
-// Implemented New Function With LLM Memory(3) //
+// Implemented New Function With LLM Memory(3)this is live //
 const getChatRespMemory = async (userMessage, sessionId) => {
   try {
     const baseMessage = webBuildMessage(userMessage); // message coming from prompt building section //;
