@@ -482,18 +482,58 @@ export const MeetingForm = ({ modStat, onSuccess }) => {
   );
 };
 
+// NORMALIZED HELPER FUNCTION //
+const CATEGORIES = [
+  "VIDEO",
+  "AUDIO",
+  "NETWORK",
+  "SURVEILLANCE",
+  "HARDWARE",
+  "Others",
+];
+const createEmptyItem = () => ({
+  itemName: "",
+  qty: 1,
+  measurement: "",
+  specification: "",
+});
+const normalizeItemDetails = (itemDetails = []) => {
+  const result = {};
+
+  // Initialize every category as an array
+  CATEGORIES.forEach((category) => {
+    result[category] = [];
+  });
+
+  // Your API returns an ARRAY
+  if (Array.isArray(itemDetails)) {
+    itemDetails.forEach((categoryData) => {
+      const category = categoryData?.category;
+
+      if (
+        category &&
+        CATEGORIES.includes(category) &&
+        Array.isArray(categoryData.items)
+      ) {
+        result[category] = categoryData.items.map((item) => ({
+          itemName: item?.itemName || "",
+          qty: item?.qty ?? 1,
+          measurement: item?.measurement || "",
+          specification: item?.specification || "",
+        }));
+      }
+    });
+  }
+
+  return result;
+};
+
 // EDIT FORM //
 
-export const EditMeetingForm = ({ data, modStat,onSuccess }) => {
-  const axios = useAxios()
-  const IT_CATEGORIES = [
-    "VIDEO",
-    "AUDIO",
-    "NETWORK",
-    "SURVEILLANCE",
-    "HARDWARE",
-    "Others",
-  ];
+export const EditMeetingForm = ({ data, modStat, onSuccess }) => {
+  console.log(data);
+  const axios = useAxios();
+
   const initialValues = {
     meetingDate: data?.meetingDate
       ? new Date(data.meetingDate).toISOString().split("T")[0]
@@ -509,7 +549,14 @@ export const EditMeetingForm = ({ data, modStat,onSuccess }) => {
     // IMPORTANT
     letter: data?.letter || null,
 
-    itemDetails: data?.itemDetails || {},
+    // IMPORTANT
+    itemDetails: normalizeItemDetails(data?.itemDetails),
+
+    selectedCategories: Array.isArray(data?.itemDetails)
+      ? data.itemDetails
+          .map((item) => item.category)
+          .filter((category) => CATEGORIES.includes(category))
+      : [],
   };
 
   const validationSchema = Yup.object({
@@ -526,7 +573,18 @@ export const EditMeetingForm = ({ data, modStat,onSuccess }) => {
     remarks: Yup.string().nullable(),
   });
 
-  
+  const convertItemDetailsForAPI = (itemDetails) => {
+  return Object.entries(itemDetails)
+    .filter(
+      ([, items]) =>
+        Array.isArray(items) && items.length > 0
+    )
+    .map(([category, items]) => ({
+      category,
+      items,
+    }));
+};
+
   const handleEditForm = async (values, { setSubmitting }) => {
     try {
       const formData = new FormData();
@@ -539,7 +597,7 @@ export const EditMeetingForm = ({ data, modStat,onSuccess }) => {
       formData.append("agency", values.agency);
       formData.append("remarks", values.remarks || "");
 
-      formData.append("itemDetails", JSON.stringify(values.itemDetails));
+      formData.append("itemDetails", JSON.stringify(convertItemDetailsForAPI(values.itemDetails)));
 
       // Only send letter when user selects a NEW file
       if (values.letter instanceof File) {
@@ -556,9 +614,9 @@ export const EditMeetingForm = ({ data, modStat,onSuccess }) => {
         toast.success(response.data.message || "Meeting updated successfully");
 
         modStat(false);
-        onSuccess()
-      }else{
-        throw new Error("Something is wrong")
+        onSuccess();
+      } else {
+        throw new Error("Something is wrong");
       }
     } catch (error) {
       console.error(error);
@@ -750,6 +808,233 @@ export const EditMeetingForm = ({ data, modStat,onSuccess }) => {
             {/* =================================================
                 IT EQUIPMENT REQUIREMENT
             ================================================= */}
+            <Paper
+              elevation={0}
+              sx={{
+                p: 3,
+                mb: 3,
+                borderRadius: 3,
+                border: "1px solid #e2e8f0",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
+                <Box>
+                  <Typography variant="h6" fontWeight={700} color="secondary">
+                    IT Equipment Requirement
+                  </Typography>
+
+                  <Typography variant="body2" color="text.secondary">
+                    Manage equipment required for the programme
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Divider sx={{ mb: 3 }} />
+
+              {/* =============================================
+                  CATEGORY SELECTOR
+              ============================================= */}
+
+              <TextField
+                select
+                fullWidth
+                size="small"
+                label="Add IT Category"
+                value=""
+                onChange={(e) => {
+                  const category = e.target.value;
+
+                  if (!category) return;
+
+                  if (!values.itemDetails[category]) {
+                    setFieldValue(`itemDetails.${category}`, [
+                      {
+                        itemName: "",
+                        qty: "",
+                        specification: "",
+                      },
+                    ]);
+                  }
+                }}
+                sx={{ mb: 3 }}
+              >
+                {CATEGORIES.map((category) => (
+                  <MenuItem key={category} value={category}>
+                    {category}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              {/* =============================================
+                  EXISTING CATEGORIES
+              ============================================= */}
+
+              {Object.entries(values.itemDetails || {}).map(
+                ([category, items]) => {
+                  if (!items) return null;
+
+                  return (
+                    <Box
+                      key={category}
+                      sx={{
+                        mb: 3,
+                        p: 2,
+                        borderRadius: 2,
+                        background: "#f8fafc",
+                        border: "1px solid #e2e8f0",
+                      }}
+                    >
+                      {/* CATEGORY HEADER */}
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          mb: 2,
+                        }}
+                      >
+                        <Typography fontWeight={700} color="primary">
+                          {category}
+                        </Typography>
+
+                        <Button
+                          size="small"
+                          color="error"
+                          variant="outlined"
+                          startIcon={<Delete />}
+                          onClick={() => {
+                            const updated = {
+                              ...values.itemDetails,
+                            };
+
+                            delete updated[category];
+
+                            setFieldValue("itemDetails", updated);
+                          }}
+                        >
+                          Remove Category
+                        </Button>
+                      </Box>
+
+                      {/* =====================================
+                          CATEGORY ITEMS
+                      ===================================== */}
+
+                      <FieldArray name={`itemDetails.${category}`}>
+                        {({ push, remove }) => (
+                          <>
+                            {items.map((item, index) => (
+                              <Box
+                                key={index}
+                                sx={{
+                                  mb: 2,
+                                  p: 2,
+                                  background: "#ffffff",
+                                  borderRadius: 2,
+                                  border: "1px solid #e5e7eb",
+                                }}
+                              >
+                                <Grid container spacing={2} alignItems="center">
+                                  {/* ITEM NAME */}
+
+                                  <Grid item xs={12} md={4}>
+                                    <TextField
+                                      fullWidth
+                                      size="small"
+                                      label="Item Name"
+                                      value={item.itemName || ""}
+                                      onChange={(e) =>
+                                        setFieldValue(
+                                          `itemDetails.${category}.${index}.itemName`,
+                                          e.target.value,
+                                        )
+                                      }
+                                    />
+                                  </Grid>
+
+                                  {/* QUANTITY */}
+
+                                  <Grid item xs={12} md={2}>
+                                    <TextField
+                                      fullWidth
+                                      size="small"
+                                      type="number"
+                                      label="Qty"
+                                      value={item.qty || ""}
+                                      onChange={(e) =>
+                                        setFieldValue(
+                                          `itemDetails.${category}.${index}.qty`,
+                                          e.target.value,
+                                        )
+                                      }
+                                    />
+                                  </Grid>
+
+                                  {/* SPECIFICATION */}
+
+                                  <Grid item xs={12} md={5}>
+                                    <TextField
+                                      fullWidth
+                                      size="small"
+                                      label="Specification"
+                                      placeholder="e.g. 10*12, Dell 18 inch"
+                                      value={item.specification || ""}
+                                      onChange={(e) =>
+                                        setFieldValue(
+                                          `itemDetails.${category}.${index}.specification`,
+                                          e.target.value,
+                                        )
+                                      }
+                                    />
+                                  </Grid>
+
+                                  {/* DELETE */}
+
+                                  <Grid item xs={12} md={1}>
+                                    <IconButton
+                                      color="error"
+                                      onClick={() => remove(index)}
+                                      disabled={items.length === 1}
+                                    >
+                                      <Delete />
+                                    </IconButton>
+                                  </Grid>
+                                </Grid>
+                              </Box>
+                            ))}
+
+                            {/* ADD ITEM */}
+
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              startIcon={<Add />}
+                              onClick={() =>
+                                push({
+                                  itemName: "",
+                                  qty: "",
+                                  specification: "",
+                                })
+                              }
+                            >
+                              Add Item
+                            </Button>
+                          </>
+                        )}
+                      </FieldArray>
+                    </Box>
+                  );
+                },
+              )}
+            </Paper>
 
             {/* =================================================
                 REMARKS

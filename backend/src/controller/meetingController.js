@@ -71,6 +71,7 @@ const getMeetingData = async (req, resp) => {
 };
 
 const editMeeting = async (req, resp) => {
+    console.log(req.body)
   try {
     const { edit_id } = req.params;
     
